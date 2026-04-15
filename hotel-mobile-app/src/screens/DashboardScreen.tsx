@@ -348,11 +348,14 @@ const styles = StyleSheet.create({
   },
   roomStatusRow: {
     flexDirection: 'row',
-    justifyContent: 'space-around',
+    gap: 12,
     marginBottom: 16,
   },
   roomStatusItem: {
+    flex: 1,
     alignItems: 'center',
+    justifyContent: 'center',
+    minHeight: 72,
   },
   roomStatusDot: {
     width: 12,
