@@ -1,0 +1,163 @@
+# JWT Refresh Token Tests
+# Use with REST Client extension in VS Code
+
+@baseUrl = http://localhost:3000/api/v1
+@accessToken = 
+@refreshToken = 
+
+### 1. Login - Get Access & Refresh Tokens
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "admin@hotel.com",
+  "password": "admin123"
+}
+
+# Response:
+# {
+#   "accessToken": "eyJhbG...", (expires in 15 minutes)
+#   "refreshToken": "3a6351e50...", (expires in 7 days)
+#   "user": { ... }
+# }
+
+### 2. Refresh Token - Get New Token Pair
+# Use the refresh token from login response
+POST {{baseUrl}}/auth/refresh
+Content-Type: application/json
+
+{
+  "refreshToken": "{{refreshToken}}"
+}
+
+# Response:
+# {
+#   "accessToken": "eyJhbG...", (new token)
+#   "refreshToken": "c6ca48b4..." (new refresh token, old one revoked)
+# }
+
+### 3. Try to Reuse Old Refresh Token (Should Fail)
+POST {{baseUrl}}/auth/refresh
+Content-Type: application/json
+
+{
+  "refreshToken": "old_token_here"
+}
+
+# Expected: 401 Unauthorized
+# Response: { "error": "Invalid or expired refresh token" }
+
+### 4. Access Protected Route with Access Token
+GET {{baseUrl}}/auth/me
+Authorization: Bearer {{accessToken}}
+
+# Response: User profile data
+
+### 5. Logout - Revoke Specific Refresh Token
+POST {{baseUrl}}/auth/logout
+Content-Type: application/json
+
+{
+  "refreshToken": "{{refreshToken}}"
+}
+
+# Response: { "message": "Logged out successfully" }
+
+### 6. Login from Multiple Devices
+# Login #1 (Desktop)
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "frontdesk@hotel.com",
+  "password": "staff123"
+}
+
+###
+# Login #2 (Mobile)
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "frontdesk@hotel.com",
+  "password": "staff123"
+}
+
+###
+# Login #3 (Tablet)
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "frontdesk@hotel.com",
+  "password": "staff123"
+}
+
+### 7. Logout from All Devices
+# Revokes ALL refresh tokens for the user
+POST {{baseUrl}}/auth/logout-all
+Authorization: Bearer {{accessToken}}
+
+# Response: { "message": "Logged out from all devices successfully" }
+
+### 8. Test Token Expiry
+# Wait 15+ minutes, then try to access protected route
+# The access token should be expired
+GET {{baseUrl}}/auth/me
+Authorization: Bearer expired_token_here
+
+# Expected: 401 Unauthorized
+# Response: { "error": "Token expired" }
+
+### 9. Use Refresh Token After Expiry
+# After 7 days, the refresh token should also expire
+POST {{baseUrl}}/auth/refresh
+Content-Type: application/json
+
+{
+  "refreshToken": "expired_refresh_token"
+}
+
+# Expected: 401 Unauthorized
+# Response: { "error": "Invalid or expired refresh token" }
+
+### 10. Test Registration with Token Pair
+POST {{baseUrl}}/auth/register
+Content-Type: application/json
+
+{
+  "email": "newstaff@hotel.com",
+  "password": "password123",
+  "firstName": "New",
+  "lastName": "Staff",
+  "phoneNumber": "+1-555-9999",
+  "role": "FRONT_DESK"
+}
+
+# Response:
+# {
+#   "accessToken": "eyJhbG...",
+#   "refreshToken": "3a6351e50...",
+#   "user": { ... }
+# }
+
+### Token Lifecycle Summary
+# 
+# 1. Login → Receive accessToken (15m) + refreshToken (7d)
+# 2. Use accessToken for API requests
+# 3. When accessToken expires → Use refreshToken to get new pair
+# 4. Token Rotation: Old refreshToken revoked, new one issued
+# 5. Logout → Revoke specific refreshToken
+# 6. Logout-all → Revoke ALL refreshTokens for user
+# 7. Expired tokens auto-deleted every 24 hours
+
+### Security Features
+#
+# ✅ Access tokens expire in 15 minutes
+# ✅ Refresh tokens expire in 7 days
+# ✅ Tokens stored in MongoDB with expiry tracking
+# ✅ Token rotation: Old token revoked when new one issued
+# ✅ isRevoked flag prevents reuse of compromised tokens
+# ✅ Logout-all revokes all sessions (security feature)
+# ✅ Automatic cleanup of expired tokens
+# ✅ Audit logging for login/logout events

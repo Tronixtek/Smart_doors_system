@@ -1,0 +1,424 @@
+# Code Citations
+
+## License: unknown
+https://github.com/zhzhzoo/Senz-Android-SDK/blob/38a892f19e04b199f642370a1444644048d6be42/README.md
+
+```
+✅ **Bluetooth permissions configured for Android 12+ compatibility**
+
+## Changes Made:
+
+### 1. **AndroidManifest.xml** ([hotel-mobile-app/android/app/src/main/AndroidManifest.xml](hotel-mobile-app/android/app/src/main/AndroidManifest.xml))
+
+Added comprehensive Bluetooth permissions with proper Android 12+ support:
+
+```xml
+<!-- Legacy Bluetooth permissions (Android < 12) -->
+<uses-permission android:name="android.permission.BLUETOOTH"/>
+<uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
+<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION
+```
+
+
+## License: unknown
+https://github.com/zhzhzoo/Senz-Android-SDK/blob/38a892f19e04b199f642370a1444644048d6be42/README.md
+
+```
+✅ **Bluetooth permissions configured for Android 12+ compatibility**
+
+## Changes Made:
+
+### 1. **AndroidManifest.xml** ([hotel-mobile-app/android/app/src/main/AndroidManifest.xml](hotel-mobile-app/android/app/src/main/AndroidManifest.xml))
+
+Added comprehensive Bluetooth permissions with proper Android 12+ support:
+
+```xml
+<!-- Legacy Bluetooth permissions (Android < 12) -->
+<uses-permission android:name="android.permission.BLUETOOTH"/>
+<uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
+<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION
+```
+
+
+## License: unknown
+https://github.com/zhzhzoo/Senz-Android-SDK/blob/38a892f19e04b199f642370a1444644048d6be42/README.md
+
+```
+✅ **Bluetooth permissions configured for Android 12+ compatibility**
+
+## Changes Made:
+
+### 1. **AndroidManifest.xml** ([hotel-mobile-app/android/app/src/main/AndroidManifest.xml](hotel-mobile-app/android/app/src/main/AndroidManifest.xml))
+
+Added comprehensive Bluetooth permissions with proper Android 12+ support:
+
+```xml
+<!-- Legacy Bluetooth permissions (Android < 12) -->
+<uses-permission android:name="android.permission.BLUETOOTH"/>
+<uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
+<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION
+```
+
+
+## License: unknown
+https://github.com/zhzhzoo/Senz-Android-SDK/blob/38a892f19e04b199f642370a1444644048d6be42/README.md
+
+```
+✅ **Bluetooth permissions configured for Android 12+ compatibility**
+
+## Changes Made:
+
+### 1. **AndroidManifest.xml** ([hotel-mobile-app/android/app/src/main/AndroidManifest.xml](hotel-mobile-app/android/app/src/main/AndroidManifest.xml))
+
+Added comprehensive Bluetooth permissions with proper Android 12+ support:
+
+```xml
+<!-- Legacy Bluetooth permissions (Android < 12) -->
+<uses-permission android:name="android.permission.BLUETOOTH"/>
+<uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
+<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION
+```
+
+
+## License: unknown
+https://github.com/zhzhzoo/Senz-Android-SDK/blob/38a892f19e04b199f642370a1444644048d6be42/README.md
+
+```
+✅ **Bluetooth permissions configured for Android 12+ compatibility**
+
+## Changes Made:
+
+### 1. **AndroidManifest.xml** ([hotel-mobile-app/android/app/src/main/AndroidManifest.xml](hotel-mobile-app/android/app/src/main/AndroidManifest.xml))
+
+Added comprehensive Bluetooth permissions with proper Android 12+ support:
+
+```xml
+<!-- Legacy Bluetooth permissions (Android < 12) -->
+<uses-permission android:name="android.permission.BLUETOOTH"/>
+<uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
+<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION
+```
+
+
+## License: unknown
+https://github.com/zhzhzoo/Senz-Android-SDK/blob/38a892f19e04b199f642370a1444644048d6be42/README.md
+
+```
+✅ **Bluetooth permissions configured for Android 12+ compatibility**
+
+## Changes Made:
+
+### 1. **AndroidManifest.xml** ([hotel-mobile-app/android/app/src/main/AndroidManifest.xml](hotel-mobile-app/android/app/src/main/AndroidManifest.xml))
+
+Added comprehensive Bluetooth permissions with proper Android 12+ support:
+
+```xml
+<!-- Legacy Bluetooth permissions (Android < 12) -->
+<uses-permission android:name="android.permission.BLUETOOTH"/>
+<uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
+<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION
+```
+
+
+## License: unknown
+https://github.com/zhzhzoo/Senz-Android-SDK/blob/38a892f19e04b199f642370a1444644048d6be42/README.md
+
+```
+✅ **Bluetooth permissions configured for Android 12+ compatibility**
+
+## Changes Made:
+
+### 1. **AndroidManifest.xml** ([hotel-mobile-app/android/app/src/main/AndroidManifest.xml](hotel-mobile-app/android/app/src/main/AndroidManifest.xml))
+
+Added comprehensive Bluetooth permissions with proper Android 12+ support:
+
+```xml
+<!-- Legacy Bluetooth permissions (Android < 12) -->
+<uses-permission android:name="android.permission.BLUETOOTH"/>
+<uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
+<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION
+```
+
+
+## License: unknown
+https://github.com/zhzhzoo/Senz-Android-SDK/blob/38a892f19e04b199f642370a1444644048d6be42/README.md
+
+```
+✅ **Bluetooth permissions configured for Android 12+ compatibility**
+
+## Changes Made:
+
+### 1. **AndroidManifest.xml** ([hotel-mobile-app/android/app/src/main/AndroidManifest.xml](hotel-mobile-app/android/app/src/main/AndroidManifest.xml))
+
+Added comprehensive Bluetooth permissions with proper Android 12+ support:
+
+```xml
+<!-- Legacy Bluetooth permissions (Android < 12) -->
+<uses-permission android:name="android.permission.BLUETOOTH"/>
+<uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
+<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION
+```
+
+
+## License: unknown
+https://github.com/zhzhzoo/Senz-Android-SDK/blob/38a892f19e04b199f642370a1444644048d6be42/README.md
+
+```
+✅ **Bluetooth permissions configured for Android 12+ compatibility**
+
+## Changes Made:
+
+### 1. **AndroidManifest.xml** ([hotel-mobile-app/android/app/src/main/AndroidManifest.xml](hotel-mobile-app/android/app/src/main/AndroidManifest.xml))
+
+Added comprehensive Bluetooth permissions with proper Android 12+ support:
+
+```xml
+<!-- Legacy Bluetooth permissions (Android < 12) -->
+<uses-permission android:name="android.permission.BLUETOOTH"/>
+<uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
+<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+
+<!-- Android 12+ Bluetooth permissions -->
+```
+
+
+## License: unknown
+https://github.com/zhiyufen/BlackBeanStudio/blob/8facda4e45087a64dca242489ffdaa4e5219659e/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/Android/%E8%93%9D%E7%89%99/%E8%93%9D%E7%89%99BLE%E5%AD%A6%E4%B9%A0.md
+
+```
+✅ **Bluetooth permissions configured for Android 12+ compatibility**
+
+## Changes Made:
+
+### 1. **AndroidManifest.xml** ([hotel-mobile-app/android/app/src/main/AndroidManifest.xml](hotel-mobile-app/android/app/src/main/AndroidManifest.xml))
+
+Added comprehensive Bluetooth permissions with proper Android 12+ support:
+
+```xml
+<!-- Legacy Bluetooth permissions (Android < 12) -->
+<uses-permission android:name="android.permission.BLUETOOTH"/>
+<uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
+<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+
+<!-- Android 12+ Bluetooth permissions -->
+<uses-permission
+  android:name="android.permission.BLUETOOTH_SCAN"
+  android:usesPermissionFlags="neverForLocation"
+  tools:targetApi="s" />
+<uses-permission android:name="android.permission.BLUETOOTH_ADVERTISE" />
+<uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
+```
+
+
+## License: unknown
+https://github.com/zhiyufen/BlackBeanStudio/blob/8facda4e45087a64dca242489ffdaa4e5219659e/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/Android/%E8%93%9D%E7%89%99/%E8%93%9D%E7%89%99BLE%E5%AD%A6%E4%B9%A0.md
+
+```
+✅ **Bluetooth permissions configured for Android 12+ compatibility**
+
+## Changes Made:
+
+### 1. **AndroidManifest.xml** ([hotel-mobile-app/android/app/src/main/AndroidManifest.xml](hotel-mobile-app/android/app/src/main/AndroidManifest.xml))
+
+Added comprehensive Bluetooth permissions with proper Android 12+ support:
+
+```xml
+<!-- Legacy Bluetooth permissions (Android < 12) -->
+<uses-permission android:name="android.permission.BLUETOOTH"/>
+<uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
+<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+
+<!-- Android 12+ Bluetooth permissions -->
+<uses-permission
+  android:name="android.permission.BLUETOOTH_SCAN"
+  android:usesPermissionFlags="neverForLocation"
+  tools:targetApi="s" />
+<uses-permission android:name="android.permission.BLUETOOTH_ADVERTISE" />
+<uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
+```
+
+
+## License: unknown
+https://github.com/zhiyufen/BlackBeanStudio/blob/8facda4e45087a64dca242489ffdaa4e5219659e/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/Android/%E8%93%9D%E7%89%99/%E8%93%9D%E7%89%99BLE%E5%AD%A6%E4%B9%A0.md
+
+```
+✅ **Bluetooth permissions configured for Android 12+ compatibility**
+
+## Changes Made:
+
+### 1. **AndroidManifest.xml** ([hotel-mobile-app/android/app/src/main/AndroidManifest.xml](hotel-mobile-app/android/app/src/main/AndroidManifest.xml))
+
+Added comprehensive Bluetooth permissions with proper Android 12+ support:
+
+```xml
+<!-- Legacy Bluetooth permissions (Android < 12) -->
+<uses-permission android:name="android.permission.BLUETOOTH"/>
+<uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
+<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+
+<!-- Android 12+ Bluetooth permissions -->
+<uses-permission
+  android:name="android.permission.BLUETOOTH_SCAN"
+  android:usesPermissionFlags="neverForLocation"
+  tools:targetApi="s" />
+<uses-permission android:name="android.permission.BLUETOOTH_ADVERTISE" />
+<uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
+```
+
+
+## License: unknown
+https://github.com/zhiyufen/BlackBeanStudio/blob/8facda4e45087a64dca242489ffdaa4e5219659e/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/Android/%E8%93%9D%E7%89%99/%E8%93%9D%E7%89%99BLE%E5%AD%A6%E4%B9%A0.md
+
+```
+✅ **Bluetooth permissions configured for Android 12+ compatibility**
+
+## Changes Made:
+
+### 1. **AndroidManifest.xml** ([hotel-mobile-app/android/app/src/main/AndroidManifest.xml](hotel-mobile-app/android/app/src/main/AndroidManifest.xml))
+
+Added comprehensive Bluetooth permissions with proper Android 12+ support:
+
+```xml
+<!-- Legacy Bluetooth permissions (Android < 12) -->
+<uses-permission android:name="android.permission.BLUETOOTH"/>
+<uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
+<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+
+<!-- Android 12+ Bluetooth permissions -->
+<uses-permission
+  android:name="android.permission.BLUETOOTH_SCAN"
+  android:usesPermissionFlags="neverForLocation"
+  tools:targetApi="s" />
+<uses-permission android:name="android.permission.BLUETOOTH_ADVERTISE" />
+<uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
+```
+
+
+## License: unknown
+https://github.com/zhiyufen/BlackBeanStudio/blob/8facda4e45087a64dca242489ffdaa4e5219659e/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/Android/%E8%93%9D%E7%89%99/%E8%93%9D%E7%89%99BLE%E5%AD%A6%E4%B9%A0.md
+
+```
+✅ **Bluetooth permissions configured for Android 12+ compatibility**
+
+## Changes Made:
+
+### 1. **AndroidManifest.xml** ([hotel-mobile-app/android/app/src/main/AndroidManifest.xml](hotel-mobile-app/android/app/src/main/AndroidManifest.xml))
+
+Added comprehensive Bluetooth permissions with proper Android 12+ support:
+
+```xml
+<!-- Legacy Bluetooth permissions (Android < 12) -->
+<uses-permission android:name="android.permission.BLUETOOTH"/>
+<uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
+<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+
+<!-- Android 12+ Bluetooth permissions -->
+<uses-permission
+  android:name="android.permission.BLUETOOTH_SCAN"
+  android:usesPermissionFlags="neverForLocation"
+  tools:targetApi="s" />
+<uses-permission android:name="android.permission.BLUETOOTH_ADVERTISE" />
+<uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
+```
+
+
+## License: unknown
+https://github.com/zhiyufen/BlackBeanStudio/blob/8facda4e45087a64dca242489ffdaa4e5219659e/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/Android/%E8%93%9D%E7%89%99/%E8%93%9D%E7%89%99BLE%E5%AD%A6%E4%B9%A0.md
+
+```
+✅ **Bluetooth permissions configured for Android 12+ compatibility**
+
+## Changes Made:
+
+### 1. **AndroidManifest.xml** ([hotel-mobile-app/android/app/src/main/AndroidManifest.xml](hotel-mobile-app/android/app/src/main/AndroidManifest.xml))
+
+Added comprehensive Bluetooth permissions with proper Android 12+ support:
+
+```xml
+<!-- Legacy Bluetooth permissions (Android < 12) -->
+<uses-permission android:name="android.permission.BLUETOOTH"/>
+<uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
+<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+
+<!-- Android 12+ Bluetooth permissions -->
+<uses-permission
+  android:name="android.permission.BLUETOOTH_SCAN"
+  android:usesPermissionFlags="neverForLocation"
+  tools:targetApi="s" />
+<uses-permission android:name="android.permission.BLUETOOTH_ADVERTISE" />
+<uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
+```
+
+
+## License: unknown
+https://github.com/zhiyufen/BlackBeanStudio/blob/8facda4e45087a64dca242489ffdaa4e5219659e/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/Android/%E8%93%9D%E7%89%99/%E8%93%9D%E7%89%99BLE%E5%AD%A6%E4%B9%A0.md
+
+```
+✅ **Bluetooth permissions configured for Android 12+ compatibility**
+
+## Changes Made:
+
+### 1. **AndroidManifest.xml** ([hotel-mobile-app/android/app/src/main/AndroidManifest.xml](hotel-mobile-app/android/app/src/main/AndroidManifest.xml))
+
+Added comprehensive Bluetooth permissions with proper Android 12+ support:
+
+```xml
+<!-- Legacy Bluetooth permissions (Android < 12) -->
+<uses-permission android:name="android.permission.BLUETOOTH"/>
+<uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
+<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+
+<!-- Android 12+ Bluetooth permissions -->
+<uses-permission
+  android:name="android.permission.BLUETOOTH_SCAN"
+  android:usesPermissionFlags="neverForLocation"
+  tools:targetApi="s" />
+<uses-permission android:name="android.permission.BLUETOOTH_ADVERTISE" />
+<uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
+```
+
+
+## License: unknown
+https://github.com/zhiyufen/BlackBeanStudio/blob/8facda4e45087a64dca242489ffdaa4e5219659e/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/Android/%E8%93%9D%E7%89%99/%E8%93%9D%E7%89%99BLE%E5%AD%A6%E4%B9%A0.md
+
+```
+✅ **Bluetooth permissions configured for Android 12+ compatibility**
+
+## Changes Made:
+
+### 1. **AndroidManifest.xml** ([hotel-mobile-app/android/app/src/main/AndroidManifest.xml](hotel-mobile-app/android/app/src/main/AndroidManifest.xml))
+
+Added comprehensive Bluetooth permissions with proper Android 12+ support:
+
+```xml
+<!-- Legacy Bluetooth permissions (Android < 12) -->
+<uses-permission android:name="android.permission.BLUETOOTH"/>
+<uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
+<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+
+<!-- Android 12+ Bluetooth permissions -->
+<uses-permission
+  android:name="android.permission.BLUETOOTH_SCAN"
+  android:usesPermissionFlags="neverForLocation"
+  tools:targetApi="s" />
+<uses-permission android:name="android.permission.BLUETOOTH_ADVERTISE" />
+<uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
+```
+

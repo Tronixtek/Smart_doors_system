@@ -1,0 +1,119 @@
+# Hotel Management API - Authentication & RBAC Tests
+# Use with REST Client extension in VS Code
+
+@baseUrl = http://localhost:3000/api/v1
+@adminToken = 
+@frontdeskToken = 
+
+### 1. Admin Login
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "admin@hotel.com",
+  "password": "admin123"
+}
+
+### 2. Front Desk Login
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "frontdesk@hotel.com",
+  "password": "staff123"
+}
+
+### 3. Get Profile (requires token)
+GET {{baseUrl}}/auth/me
+Authorization: Bearer {{adminToken}}
+
+### 4. Get All Rooms (requires auth - any staff)
+GET {{baseUrl}}/rooms
+Authorization: Bearer {{frontdeskToken}}
+
+### 5. Get Available Rooms Only
+GET {{baseUrl}}/rooms/available
+Authorization: Bearer {{frontdeskToken}}
+
+### 6. Update Room Status (Front Desk CAN do this)
+PATCH {{baseUrl}}/rooms/69996a98340d52877f8c7b6e/status
+Authorization: Bearer {{frontdeskToken}}
+Content-Type: application/json
+
+{
+  "status": "AVAILABLE"
+}
+
+### 7. Create New Room (Front Desk CANNOT - requires Admin/Manager)
+# This should return 403 Forbidden
+POST {{baseUrl}}/rooms
+Authorization: Bearer {{frontdeskToken}}
+Content-Type: application/json
+
+{
+  "roomNumber": "502",
+  "floor": 5,
+  "roomType": "SUITE",
+  "status": "AVAILABLE",
+  "basePrice": 349.99,
+  "maxOccupancy": 4
+}
+
+### 8. Create New Room (Admin CAN do this)
+POST {{baseUrl}}/rooms
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "roomNumber": "502",
+  "floor": 5,
+  "roomType": "SUITE",
+  "status": "AVAILABLE",
+  "basePrice": 349.99,
+  "maxOccupancy": 4,
+  "hasBalcony": true,
+  "hasKitchen": true,
+  "isSmoking": false
+}
+
+### 9. Get All Reservations
+GET {{baseUrl}}/reservations
+Authorization: Bearer {{frontdeskToken}}
+
+### 10. Get Today's Check-ins
+GET {{baseUrl}}/reservations/today-checkins
+Authorization: Bearer {{frontdeskToken}}
+
+### 11. Create Reservation
+POST {{baseUrl}}/reservations
+Authorization: Bearer {{frontdeskToken}}
+Content-Type: application/json
+
+{
+  "guestName": "Alice Johnson",
+  "guestEmail": "alice@example.com",
+  "guestPhone": "+1-555-9999",
+  "numberOfGuests": 2,
+  "checkInDate": "2026-02-23T14:00:00Z",
+  "checkOutDate": "2026-02-26T10:00:00Z",
+  "roomId": "69996a98340d52877f8c7b70",
+  "status": "CONFIRMED",
+  "totalAmount": 299.97,
+  "paidAmount": 150
+}
+
+### 12. Test Without Token (should fail with 401)
+GET {{baseUrl}}/rooms
+
+### 13. Test Invalid Token (should fail with 401)
+GET {{baseUrl}}/rooms
+Authorization: Bearer invalid_token_here
+
+### 14. Failed Login (wrong password)
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "admin@hotel.com",
+  "password": "wrongpassword"
+}

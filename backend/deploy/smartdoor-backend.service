@@ -1,0 +1,18 @@
+[Unit]
+Description=SmartDoor Backend API
+After=network.target
+
+[Service]
+Type=simple
+User=www-data
+WorkingDirectory=/opt/smartdoor/backend
+EnvironmentFile=/opt/smartdoor/backend/.env
+ExecStart=/usr/bin/node /opt/smartdoor/backend/dist/server.js
+Restart=always
+RestartSec=5
+KillSignal=SIGINT
+StandardOutput=append:/var/log/smartdoor-backend.log
+StandardError=append:/var/log/smartdoor-backend-error.log
+
+[Install]
+WantedBy=multi-user.target
