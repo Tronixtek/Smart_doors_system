@@ -12,7 +12,8 @@ const router = Router();
  */
 router.post('/login', async (req: Request, res: Response) => {
   try {
-    const { email, password } = req.body;
+    const email = String(req.body.email || '').trim();
+    const password = req.body.password;
 
     if (!email || !password) {
       return res.status(400).json({ error: 'Email and password are required' });
@@ -111,7 +112,8 @@ router.post('/login', async (req: Request, res: Response) => {
  */
 router.post('/register', async (req: Request, res: Response) => {
   try {
-    const { email, password, firstName, lastName, phoneNumber, role } = req.body;
+    const email = String(req.body.email || '').trim();
+    const { password, firstName, lastName, phoneNumber, role } = req.body;
 
     if (!email || !password || !firstName || !lastName) {
       return res.status(400).json({ error: 'All fields are required' });

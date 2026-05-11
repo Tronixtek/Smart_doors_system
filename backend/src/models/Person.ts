@@ -107,8 +107,6 @@ const PersonSchema = new Schema<IPerson>(
   }
 );
 
-PersonSchema.index({ email: 1 });
-PersonSchema.index({ employeeId: 1 }, { unique: true, sparse: true });
 PersonSchema.index({ personType: 1, status: 1 });
 PersonSchema.index({ department: 1 });
 PersonSchema.index({ company: 1 });

@@ -112,7 +112,6 @@ const SpaceSchema = new Schema<ISpace>(
   }
 );
 
-SpaceSchema.index({ code: 1 }, { unique: true });
 SpaceSchema.index({ site: 1, floor: 1 });
 SpaceSchema.index({ type: 1, status: 1 });
 SpaceSchema.index({ department: 1 });

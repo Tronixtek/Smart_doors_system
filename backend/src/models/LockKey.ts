@@ -16,8 +16,10 @@ export enum LockKeyStatus {
 
 export interface ILockKey extends Document {
   lockId: mongoose.Types.ObjectId; // Reference to Lock
-  roomId: mongoose.Types.ObjectId; // Reference to Room
-  reservationId: mongoose.Types.ObjectId; // Reference to Reservation
+  roomId?: mongoose.Types.ObjectId; // Reference to Room
+  reservationId?: mongoose.Types.ObjectId; // Reference to Reservation
+  spaceId?: mongoose.Types.ObjectId; // Reference to Office Space
+  visitId?: mongoose.Types.ObjectId; // Reference to Office Visit
   guestName: string;
   keyType: LockKeyType;
   keyIdentifier: string; // PasscodNumber, card number, fingerprint ID, or eKey ID
@@ -48,12 +50,18 @@ const LockKeySchema = new Schema<ILockKey>(
     roomId: {
       type: Schema.Types.ObjectId,
       ref: 'Room',
-      required: true,
     },
     reservationId: {
       type: Schema.Types.ObjectId,
       ref: 'Reservation',
-      required: true,
+    },
+    spaceId: {
+      type: Schema.Types.ObjectId,
+      ref: 'Space',
+    },
+    visitId: {
+      type: Schema.Types.ObjectId,
+      ref: 'Visit',
     },
     guestName: {
       type: String,
@@ -110,6 +118,8 @@ const LockKeySchema = new Schema<ILockKey>(
 LockKeySchema.index({ lockId: 1 });
 LockKeySchema.index({ roomId: 1 });
 LockKeySchema.index({ reservationId: 1 });
+LockKeySchema.index({ spaceId: 1 });
+LockKeySchema.index({ visitId: 1 });
 LockKeySchema.index({ status: 1 });
 LockKeySchema.index({ startDate: 1, endDate: 1 });
 LockKeySchema.index({ keyIdentifier: 1 });

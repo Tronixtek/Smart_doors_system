@@ -101,7 +101,6 @@ const RoomSchema = new Schema<IRoom>(
 );
 
 // Indexes
-RoomSchema.index({ roomNumber: 1 });
 RoomSchema.index({ status: 1 });
 RoomSchema.index({ roomType: 1 });
 RoomSchema.index({ floor: 1 });

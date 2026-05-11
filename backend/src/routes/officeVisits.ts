@@ -7,6 +7,52 @@ const router = Router();
 
 router.use(verifyToken);
 
+const activateOfficeAccess = async (req: Request, res: Response) => {
+  try {
+    const visit = await Visit.findById(req.params.id);
+
+    if (!visit) {
+      return res.status(404).json({ error: 'Office access schedule not found' });
+    }
+
+    if (visit.status === VisitStatus.CANCELLED || visit.status === VisitStatus.CHECKED_OUT) {
+      return res.status(400).json({ error: `Cannot activate access for a record with status ${visit.status}` });
+    }
+
+    visit.status = VisitStatus.CHECKED_IN;
+    visit.checkedInAt = new Date();
+    await visit.save();
+
+    return res.json({ data: visit });
+  } catch (error) {
+    console.error('Office access activation error:', error);
+    return res.status(500).json({ error: 'Failed to activate office access' });
+  }
+};
+
+const revokeOfficeAccess = async (req: Request, res: Response) => {
+  try {
+    const visit = await Visit.findById(req.params.id);
+
+    if (!visit) {
+      return res.status(404).json({ error: 'Office access schedule not found' });
+    }
+
+    if (visit.status === VisitStatus.CANCELLED) {
+      return res.status(400).json({ error: 'Cannot revoke access for a cancelled schedule' });
+    }
+
+    visit.status = VisitStatus.CHECKED_OUT;
+    visit.checkedOutAt = new Date();
+    await visit.save();
+
+    return res.json({ data: visit });
+  } catch (error) {
+    console.error('Office access revocation error:', error);
+    return res.status(500).json({ error: 'Failed to revoke office access' });
+  }
+};
+
 router.get('/', requireStaff, async (req: Request, res: Response) => {
   try {
     const { status, personId, spaceId, hostUserId, from, to, page = 1, limit = 50 } = req.query;
@@ -201,56 +247,28 @@ router.patch(
   '/:id/check-in',
   requireStaff,
   auditLog(AuditAction.VISIT_CHECK_IN, (req) => `Office visit ${req.params.id} checked in`),
-  async (req: Request, res: Response) => {
-    try {
-      const visit = await Visit.findById(req.params.id);
-
-      if (!visit) {
-        return res.status(404).json({ error: 'Office visit not found' });
-      }
-
-      if (visit.status === VisitStatus.CANCELLED || visit.status === VisitStatus.CHECKED_OUT) {
-        return res.status(400).json({ error: `Cannot check in a visit with status ${visit.status}` });
-      }
-
-      visit.status = VisitStatus.CHECKED_IN;
-      visit.checkedInAt = new Date();
-      await visit.save();
-
-      res.json({ data: visit });
-    } catch (error) {
-      console.error('Office visit check-in error:', error);
-      res.status(500).json({ error: 'Failed to check in visit' });
-    }
-  }
+  activateOfficeAccess
 );
 
 router.patch(
   '/:id/check-out',
   requireStaff,
   auditLog(AuditAction.VISIT_CHECK_OUT, (req) => `Office visit ${req.params.id} checked out`),
-  async (req: Request, res: Response) => {
-    try {
-      const visit = await Visit.findById(req.params.id);
+  revokeOfficeAccess
+);
 
-      if (!visit) {
-        return res.status(404).json({ error: 'Office visit not found' });
-      }
+router.patch(
+  '/:id/activate-access',
+  requireStaff,
+  auditLog(AuditAction.VISIT_CHECK_IN, (req) => `Office access ${req.params.id} activated`),
+  activateOfficeAccess
+);
 
-      if (visit.status === VisitStatus.CANCELLED) {
-        return res.status(400).json({ error: 'Cannot check out a cancelled visit' });
-      }
-
-      visit.status = VisitStatus.CHECKED_OUT;
-      visit.checkedOutAt = new Date();
-      await visit.save();
-
-      res.json({ data: visit });
-    } catch (error) {
-      console.error('Office visit check-out error:', error);
-      res.status(500).json({ error: 'Failed to check out visit' });
-    }
-  }
+router.patch(
+  '/:id/revoke-access',
+  requireStaff,
+  auditLog(AuditAction.VISIT_CHECK_OUT, (req) => `Office access ${req.params.id} revoked`),
+  revokeOfficeAccess
 );
 
 router.patch(

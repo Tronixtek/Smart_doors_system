@@ -92,8 +92,6 @@ const LockSchema = new Schema<ILock>(
 );
 
 // Indexes for faster queries
-LockSchema.index({ roomId: 1 });
 LockSchema.index({ status: 1 });
-LockSchema.index({ lockMac: 1 }, { unique: true });
 
 export const Lock = mongoose.model<ILock>('Lock', LockSchema);
