@@ -23,6 +23,15 @@
         "EXPO_PUBLIC_API_URL": "https://mako-access-api.143-198-150-26.nip.io/api/v1"
       }
     },
+    "preview-simulator": {
+      "distribution": "internal",
+      "ios": {
+        "simulator": true
+      },
+      "env": {
+        "EXPO_PUBLIC_API_URL": "https://mako-access-api.143-198-150-26.nip.io/api/v1"
+      }
+    },
     "production": {
       "autoIncrement": true,
       "env": {
