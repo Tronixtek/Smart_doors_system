@@ -212,7 +212,7 @@ const PricingCard = ({ plan, price, features, recommended = false, onOpenRegiste
     const handler = window.PaystackPop.setup({
       key: PAYSTACK_PUBLIC_KEY,
       email: 'customer@example.com',
-      amount: price * 100 * 450, // Price in Kobo (assuming price is USD and 450 is exchange rate)
+      amount: (price - 24) * 100 * 450, // $24 discount off displayed price, then converted to Kobo (USD -> NGN at 450)
       currency: 'NGN',
       ref: ''+Math.floor((Math.random() * 1000000000) + 1),
       callback: (response) => {
@@ -327,8 +327,8 @@ const App = () => {
             />
             <FeatureCard 
               icon={CpuChipIcon}
-              title="TTLock Ready"
-              description="Seamless integration with TTLock hardware for enterprise-grade reliability."
+              title="Mako Access Lock Ready"
+              description="Seamless integration with Mako Access Lock hardware for enterprise-grade reliability."
             />
           </div>
         </div>
