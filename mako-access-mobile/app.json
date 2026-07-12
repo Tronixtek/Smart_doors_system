@@ -55,6 +55,12 @@
           }
         }
       ]
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "7efd6906-f5eb-4e38-8378-cb45eaabfff5"
+      }
+    },
+    "owner": "vt_francis"
   }
 }
