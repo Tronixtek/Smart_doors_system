@@ -15,7 +15,6 @@ router.post('/register-org', async (req, res) => {
     if (existingOrg) return res.status(400).json({ message: 'Organization slug already exists' });
 
     const organization = await Organization.create({
-      ownerId: null,
       name: orgName,
       slug: orgSlug,
     });
