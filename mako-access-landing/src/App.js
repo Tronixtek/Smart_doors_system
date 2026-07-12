@@ -212,7 +212,7 @@ const PricingCard = ({ plan, price, features, recommended = false, onOpenRegiste
     const handler = window.PaystackPop.setup({
       key: PAYSTACK_PUBLIC_KEY,
       email: 'customer@example.com',
-      amount: price * 100 * usdToNgn, // Price in Kobo, converted at the live USD -> NGN rate
+      amount: Math.round(price * 100 * usdToNgn), // Price in Kobo (must be an integer), converted at the live USD -> NGN rate
       currency: 'NGN',
       ref: ''+Math.floor((Math.random() * 1000000000) + 1),
       callback: (response) => {
