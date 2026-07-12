@@ -212,7 +212,7 @@ const PricingCard = ({ plan, price, features, recommended = false, onOpenRegiste
     const handler = window.PaystackPop.setup({
       key: PAYSTACK_PUBLIC_KEY,
       email: 'customer@example.com',
-      amount: (price - 24) * 100 * 450, // $24 discount off displayed price, then converted to Kobo (USD -> NGN at 450)
+      amount: price * 100 * 450, // Price in Kobo (USD -> NGN at 450)
       currency: 'NGN',
       ref: ''+Math.floor((Math.random() * 1000000000) + 1),
       callback: (response) => {
@@ -343,22 +343,22 @@ const App = () => {
           </div>
           
           <div className="grid md:grid-cols-3 gap-8 items-center">
-            <PricingCard 
+            <PricingCard
               plan="Starter"
-              price={49}
+              price={49 - 24}
               onOpenRegister={() => setIsRegisterOpen(true)}
               features={["Up to 5 Smart Locks", "10 Virtual Keys", "Basic Access Logs", "Mobile App Access"]}
             />
-            <PricingCard 
+            <PricingCard
               plan="Professional"
-              price={149}
+              price={149 - 24}
               recommended={true}
               onOpenRegister={() => setIsRegisterOpen(true)}
               features={["Unlimited Smart Locks", "Unlimited Virtual Keys", "Advanced Analytics", "Multi-user Roles", "24/7 Support"]}
             />
-            <PricingCard 
+            <PricingCard
               plan="Enterprise"
-              price={499}
+              price={499 - 24}
               onOpenRegister={() => setIsRegisterOpen(true)}
               features={["Custom Integration", "Dedicated Support", "API Access", "White-label Options", "On-site Installation"]}
             />
