@@ -9,6 +9,7 @@ mako-access-backend/dist/
 
 # landing (CRA build output)
 mako-access-landing/build/
+mako-access-landing/.firebase/
 
 # expo / mobile
 mako-access-mobile/.expo/
