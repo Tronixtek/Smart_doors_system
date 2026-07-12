@@ -6,6 +6,7 @@ import authRoutes from './routes/auth';
 import organizationRoutes from './routes/organization';
 import accessPointRoutes from './routes/accessPoints';
 import lockRoutes from './routes/locks';
+import ratesRoutes from './routes/rates';
 
 dotenv.config();
 
@@ -27,6 +28,7 @@ app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/organizations', organizationRoutes);
 app.use('/api/v1/access-points', accessPointRoutes);
 app.use('/api/v1/locks', lockRoutes);
+app.use('/api/v1/rates', ratesRoutes);
 
 mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/mako-access')
   .then(() => {

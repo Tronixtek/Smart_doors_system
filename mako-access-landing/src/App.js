@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   ShieldCheckIcon, 
   KeyIcon, 
@@ -207,12 +207,12 @@ const FeatureCard = ({ icon: Icon, title, description }) => (
   </div>
 );
 
-const PricingCard = ({ plan, price, features, recommended = false, onOpenRegister }) => {
+const PricingCard = ({ plan, price, features, recommended = false, onOpenRegister, usdToNgn }) => {
   const handlePayment = () => {
     const handler = window.PaystackPop.setup({
       key: PAYSTACK_PUBLIC_KEY,
       email: 'customer@example.com',
-      amount: price * 100 * 450, // Price in Kobo (USD -> NGN at 450)
+      amount: price * 100 * usdToNgn, // Price in Kobo, converted at the live USD -> NGN rate
       currency: 'NGN',
       ref: ''+Math.floor((Math.random() * 1000000000) + 1),
       callback: (response) => {
@@ -245,11 +245,12 @@ const PricingCard = ({ plan, price, features, recommended = false, onOpenRegiste
         ))}
       </ul>
       
-      <button 
+      <button
         onClick={handlePayment}
-        className={`w-full py-4 rounded-2xl font-bold text-lg transition ${recommended ? 'bg-primary-500 hover:bg-primary-600 text-white' : 'bg-slate-100 hover:bg-slate-200 text-slate-900'}`}
+        disabled={!usdToNgn}
+        className={`w-full py-4 rounded-2xl font-bold text-lg transition disabled:opacity-50 disabled:cursor-not-allowed ${recommended ? 'bg-primary-500 hover:bg-primary-600 text-white' : 'bg-slate-100 hover:bg-slate-200 text-slate-900'}`}
       >
-        Buy Now
+        {usdToNgn ? 'Buy Now' : 'Loading...'}
       </button>
     </div>
   );
@@ -257,6 +258,14 @@ const PricingCard = ({ plan, price, features, recommended = false, onOpenRegiste
 
 const App = () => {
   const [isRegisterOpen, setIsRegisterOpen] = useState(false);
+  const [usdToNgn, setUsdToNgn] = useState(null);
+
+  useEffect(() => {
+    fetch(`${BACKEND_URL}/rates/usd-ngn`)
+      .then((res) => res.json())
+      .then((data) => setUsdToNgn(data.usdToNgn))
+      .catch(() => setUsdToNgn(1400)); // fallback if the rate endpoint is unreachable
+  }, []);
 
   return (
     <div className="min-h-screen">
@@ -347,6 +356,7 @@ const App = () => {
               plan="Starter"
               price={49 - 24}
               onOpenRegister={() => setIsRegisterOpen(true)}
+              usdToNgn={usdToNgn}
               features={["Up to 5 Smart Locks", "10 Virtual Keys", "Basic Access Logs", "Mobile App Access"]}
             />
             <PricingCard
@@ -354,12 +364,14 @@ const App = () => {
               price={149 - 24}
               recommended={true}
               onOpenRegister={() => setIsRegisterOpen(true)}
+              usdToNgn={usdToNgn}
               features={["Unlimited Smart Locks", "Unlimited Virtual Keys", "Advanced Analytics", "Multi-user Roles", "24/7 Support"]}
             />
             <PricingCard
               plan="Enterprise"
               price={499 - 24}
               onOpenRegister={() => setIsRegisterOpen(true)}
+              usdToNgn={usdToNgn}
               features={["Custom Integration", "Dedicated Support", "API Access", "White-label Options", "On-site Installation"]}
             />
           </div>
