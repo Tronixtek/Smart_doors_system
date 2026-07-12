@@ -1,0 +1,23 @@
+node_modules/
+.DS_Store
+.env
+.env.local
+.env.*.local
+
+# backend
+mako-access-backend/dist/
+
+# landing (CRA build output)
+mako-access-landing/build/
+
+# expo / mobile
+mako-access-mobile/.expo/
+mako-access-mobile/android/app/build/
+mako-access-mobile/android/build/
+mako-access-mobile/android/.gradle/
+mako-access-mobile/ios/build/
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision

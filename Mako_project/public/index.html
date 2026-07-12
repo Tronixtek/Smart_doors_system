@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mako Security Systems - Advanced Security Solutions</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-wrapper">
+                <div class="logo">
+                    <i class="fas fa-shield-alt"></i>
+                    <span>MAKO</span>
+                </div>
+                <ul class="nav-menu" id="navMenu">
+                    <li><a href="#home">Home</a></li>
+                    <li><a href="#products">Products</a></li>
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#access">Mako Access</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+                <button class="cta-btn" onclick="document.getElementById('access').scrollIntoView({behavior: 'smooth'})">Get Started</button>
+                <div class="hamburger" id="hamburger">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="hero-bg"></div>
+        <div class="hero-overlay"></div>
+        <div class="container">
+            <div class="hero-content">
+                <h1 class="hero-title">
+                    <span class="gradient-text">Complete Security</span><br>
+                    Ecosystem
+                </h1>
+                <p class="hero-subtitle">From AI-powered surveillance to biometric access control, Mako Security provides a comprehensive suite of advanced technology to protect your future.</p>
+                <div class="hero-buttons">
+                    <button class="btn btn-primary">Explore Products</button>
+                    <button class="btn btn-secondary">Watch Demo</button>
+                </div>
+                <div class="trust-badges">
+                    <div class="badge">
+                        <i class="fas fa-check-circle"></i>
+                        <span>ISO Certified</span>
+                    </div>
+                    <div class="badge">
+                        <i class="fas fa-shield-alt"></i>
+                        <span>Military Grade</span>
+                    </div>
+                    <div class="badge">
+                        <i class="fas fa-users"></i>
+                        <span>500+ Clients</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="scroll-indicator">
+            <div class="mouse"></div>
+        </div>
+    </section>
+
+    <!-- Products Section -->
+    <section class="products" id="products">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">Our Solutions</span>
+                <h2 class="section-title">Innovative Security Products</h2>
+                <p class="section-subtitle">Comprehensive security solutions tailored to meet your unique needs</p>
+            </div>
+
+            <div class="products-grid">
+                <!-- Product 1: Biometric Attendance Systems -->
+                <div class="product-card">
+                    <div class="product-icon">
+                        <i class="fas fa-fingerprint"></i>
+                    </div>
+                    <h3 class="product-title">Biometric Attendance Systems</h3>
+                    <p class="product-description">Advanced facial recognition and fingerprint technology for accurate time and attendance tracking with cloud-based management.</p>
+                    <ul class="product-features">
+                        <li><i class="fas fa-check"></i> Multi-modal authentication</li>
+                        <li><i class="fas fa-check"></i> Real-time reporting</li>
+                        <li><i class="fas fa-check"></i> Cloud integration</li>
+                        <li><i class="fas fa-check"></i> Anti-spoofing technology</li>
+                    </ul>
+                    <button class="product-btn">Learn More <i class="fas fa-arrow-right"></i></button>
+                </div>
+
+                <!-- Product 2: Census Enrollment Program -->
+                <div class="product-card featured">
+                    <div class="featured-badge">Popular</div>
+                    <div class="product-icon">
+                        <i class="fas fa-id-card"></i>
+                    </div>
+                    <h3 class="product-title">Census Enrollment Program</h3>
+                    <p class="product-description">Streamlined digital enrollment solutions with biometric capture, data verification, and secure database management for government and enterprise applications.</p>
+                    <ul class="product-features">
+                        <li><i class="fas fa-check"></i> Biometric data capture</li>
+                        <li><i class="fas fa-check"></i> Offline capability</li>
+                        <li><i class="fas fa-check"></i> Data encryption</li>
+                        <li><i class="fas fa-check"></i> Mobile enrollment units</li>
+                    </ul>
+                    <button class="product-btn">Learn More <i class="fas fa-arrow-right"></i></button>
+                </div>
+
+                <!-- Product 3: Smart Security Locks -->
+                <div class="product-card featured" id="smart-locks">
+                    <div class="featured-badge">Mako Access</div>
+                    <div class="product-icon">
+                        <i class="fas fa-lock"></i>
+                    </div>
+                    <h3 class="product-title">Mako Access: Smart Locks</h3>
+                    <p class="product-description">The ultimate smart lock management platform. IoT-enabled locks with mobile entry, virtual eKeys, and real-time security logs.</p>
+                    <ul class="product-features">
+                        <li><i class="fas fa-check"></i> Unlock with your Phone</li>
+                        <li><i class="fas fa-check"></i> Issue Virtual eKeys</li>
+                        <li><i class="fas fa-check"></i> Real-time Activity Logs</li>
+                        <li><i class="fas fa-check"></i> Enterprise TTLock Ready</li>
+                    </ul>
+                    <button class="product-btn" onclick="document.getElementById('access').scrollIntoView({behavior: 'smooth'})">Get Started <i class="fas fa-arrow-right"></i></button>
+                </div>
+
+                <!-- Product 4: Drones -->
+                <div class="product-card">
+                    <div class="product-icon">
+                        <i class="fas fa-helicopter"></i>
+                    </div>
+                    <h3 class="product-title">Security Drones</h3>
+                    <p class="product-description">Autonomous aerial surveillance systems with thermal imaging, real-time video streaming, and AI-powered threat detection for perimeter security.</p>
+                    <ul class="product-features">
+                        <li><i class="fas fa-check"></i> Autonomous patrol routes</li>
+                        <li><i class="fas fa-check"></i> Night vision capability</li>
+                        <li><i class="fas fa-check"></i> AI threat detection</li>
+                        <li><i class="fas fa-check"></i> Live video feed</li>
+                    </ul>
+                    <button class="product-btn">Learn More <i class="fas fa-arrow-right"></i></button>
+                </div>
+
+                <!-- Product 5: Cybersecurity Services -->
+                <div class="product-card">
+                    <div class="product-icon">
+                        <i class="fas fa-shield-virus"></i>
+                    </div>
+                    <h3 class="product-title">Cybersecurity Services</h3>
+                    <p class="product-description">Comprehensive cybersecurity solutions including penetration testing, vulnerability assessments, security audits, and 24/7 threat monitoring.</p>
+                    <ul class="product-features">
+                        <li><i class="fas fa-check"></i> Penetration testing</li>
+                        <li><i class="fas fa-check"></i> Threat intelligence</li>
+                        <li><i class="fas fa-check"></i> Security audits</li>
+                        <li><i class="fas fa-check"></i> Incident response</li>
+                    </ul>
+                    <button class="product-btn">Learn More <i class="fas fa-arrow-right"></i></button>
+                </div>
+
+                <!-- Product 6: Supply of Security Gadgets -->
+                <div class="product-card">
+                    <div class="product-icon">
+                        <i class="fas fa-shopping-cart"></i>
+                    </div>
+                    <h3 class="product-title">Supply of Security Gadgets</h3>
+                    <p class="product-description">Premium selection of security gadgets and equipment including surveillance cameras, motion sensors, access control devices, and advanced monitoring tools.</p>
+                    <ul class="product-features">
+                        <li><i class="fas fa-check"></i> High-quality equipment</li>
+                        <li><i class="fas fa-check"></i> Warranty coverage</li>
+                        <li><i class="fas fa-check"></i> Technical support</li>
+                        <li><i class="fas fa-check"></i> Bulk ordering available</li>
+                    </ul>
+                    <button class="product-btn">Learn More <i class="fas fa-arrow-right"></i></button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="about" id="about">
+        <div class="container">
+            <div class="about-grid">
+                <div class="about-content">
+                    <span class="section-tag">About Mako</span>
+                    <h2 class="section-title">Leading the Future of Security Technology</h2>
+                    <p class="about-text">At Mako Security Systems, we're committed to providing cutting-edge security solutions that protect what matters most. With over a decade of experience, we've established ourselves as industry leaders in innovative security technology.</p>
+                    <p class="about-text">Our team of expert engineers and security professionals work tirelessly to develop solutions that combine reliability, innovation, and user-friendliness. We serve clients across government, enterprise, and commercial sectors worldwide.</p>
+                    <div class="about-features">
+                        <div class="about-feature">
+                            <i class="fas fa-award"></i>
+                            <div>
+                                <h4>Award Winning</h4>
+                                <p>Recognized globally for excellence</p>
+                            </div>
+                        </div>
+                        <div class="about-feature">
+                            <i class="fas fa-headset"></i>
+                            <div>
+                                <h4>24/7 Support</h4>
+                                <p>Round-the-clock assistance</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="about-image">
+                    <img src="https://images.unsplash.com/photo-1497366216548-37526070297c?w=800&q=80" alt="Modern Security Technology">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Mako Access Integration Section -->
+    <section class="access-integration" id="access">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">Featured Platform</span>
+                <h2 class="section-title">Mako Access Control</h2>
+                <p class="section-subtitle">Your Phone is Your New Key. The ultimate smart lock management platform.</p>
+            </div>
+            
+            <div class="access-grid">
+                <div class="access-phone">
+                    <div class="phone-mockup">
+                        <img src="https://images.unsplash.com/photo-1558002038-1055907df827?auto=format&fit=crop&q=80&w=600" alt="Mako Access App">
+                    </div>
+                </div>
+                <div class="access-details">
+                    <div class="pricing-tabs">
+                        <div class="pricing-card">
+                            <span class="plan-name">Starter</span>
+                            <div class="plan-price">$49<span>/one-time</span></div>
+                            <ul class="plan-features">
+                                <li><i class="fas fa-check"></i> 5 Smart Locks</li>
+                                <li><i class="fas fa-check"></i> 10 Virtual Keys</li>
+                                <li><i class="fas fa-check"></i> Mobile App Access</li>
+                            </ul>
+                            <button class="plan-btn" onclick="alert('Redirecting to Payment...')">Buy Starter</button>
+                        </div>
+                        <div class="pricing-card recommended">
+                            <div class="popular-tag">Recommended</div>
+                            <span class="plan-name">Professional</span>
+                            <div class="plan-price">$149<span>/one-time</span></div>
+                            <ul class="plan-features">
+                                <li><i class="fas fa-check"></i> Unlimited Locks</li>
+                                <li><i class="fas fa-check"></i> Unlimited Virtual Keys</li>
+                                <li><i class="fas fa-check"></i> Advanced Analytics</li>
+                            </ul>
+                            <button class="plan-btn featured" onclick="alert('Redirecting to Payment...')">Buy Pro</button>
+                        </div>
+                    </div>
+                    
+                    <div class="register-promo">
+                        <h3>Already have a lock?</h3>
+                        <p>Create your account to start managing your devices today.</p>
+                        <button class="promo-btn" onclick="document.getElementById('contact').scrollIntoView({behavior: 'smooth'})">Register Free</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <div class="container">
+            <div class="cta-content">
+                <h2>Ready to Enhance Your Security?</h2>
+                <p>Get in touch with our experts to discuss your security needs and discover the perfect solution for your organization.</p>
+                <div class="cta-buttons">
+                    <button class="btn btn-primary">Request Consultation</button>
+                    <button class="btn btn-outline">Download Brochure</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="contact" id="contact">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">Get in Touch</span>
+                <h2 class="section-title">Contact Us</h2>
+            </div>
+            <div class="contact-grid">
+                <div class="contact-info">
+                    <div class="contact-item">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <div>
+                            <h4>Lokoja Office </h4>
+                            <p>Suite 46, Gate 2, Katsina Road,<br>Lokoja, Kogi State, Nigeria</p>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <div>
+                            <h4>Abuja Office</h4>
+                            <p>CS58 Harmonic Plaza, Jabi,<br>Abuja, FCT, Nigeria</p>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <i class="fas fa-phone"></i>
+                        <div>
+                            <h4>Phone</h4>
+                            <p>+234 803 813 4679</p>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <i class="fas fa-envelope"></i>
+                        <div>
+                            <h4>Email</h4>
+                            <p>makosecuresystem@gmail.com</p>
+                        </div>
+                    </div>
+                </div>
+                <form class="contact-form" id="contactForm">
+                    <div class="form-group">
+                        <input type="text" id="name" name="name" placeholder="Your Name" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="email" id="email" name="email" placeholder="Your Email" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" id="subject" name="subject" placeholder="Subject">
+                    </div>
+                    <div class="form-group">
+                        <textarea id="message" name="message" placeholder="Your Message" rows="5" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Send Message</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <div class="footer-logo">
+                        <i class="fas fa-shield-alt"></i>
+                        <span>MAKO</span>
+                    </div>
+                    <p>Leading provider of innovative security solutions for a safer world.</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-linkedin"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+                <div class="footer-col">
+                    <h4>Products</h4>
+                    <ul>
+                        <li><a href="#">Biometric Systems</a></li>
+                        <li><a href="#">Census Enrollment</a></li>
+                        <li><a href="#">Smart Locks</a></li>
+                        <li><a href="#">Security Drones</a></li>
+                        <li><a href="#">Cybersecurity</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Company</h4>
+                    <ul>
+                        <li><a href="#">About Us</a></li>
+                        <li><a href="#">Careers</a></li>
+                        <li><a href="#">News</a></li>
+                        <li><a href="#">Partners</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Support</h4>
+                    <ul>
+                        <li><a href="#">Help Center</a></li>
+                        <li><a href="#">Documentation</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Terms of Service</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Mako Security Systems. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
