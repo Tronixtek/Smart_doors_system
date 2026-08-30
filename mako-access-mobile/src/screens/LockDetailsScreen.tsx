@@ -125,7 +125,12 @@ export default function LockDetailsScreen({ route, navigation }: any) {
   const handleSyncLogs = async () => {
     setSyncing(true);
     try {
+      // Read the logs first, then correct the clock. Every timestamp in the
+      // history comes from the lock's clock, so keeping it right is what stops
+      // the history drifting - and doing it after the read means this sync's
+      // records keep the times the lock actually recorded them with.
       const logs = await TTLockService.getLogs(lock.lockData);
+      await TTLockService.syncLockTimeQuietly(lock.lockData);
       if (logs.length > 0) {
         await apiClient.post(`/locks/${lock._id}/logs`, { logs });
         Alert.alert('Sync Complete', `Successfully synced ${logs.length} access records.`);
@@ -134,7 +139,7 @@ export default function LockDetailsScreen({ route, navigation }: any) {
         Alert.alert('No New Logs', 'The lock has no new access records to sync.');
       }
     } catch (error: any) {
-      Alert.alert('Sync Failed', error.message || 'Could not fetch logs from hardware');
+      Alert.alert('Sync Failed', getApiErrorMessage(error, 'Could not fetch logs from hardware'));
     } finally {
       setSyncing(false);
     }

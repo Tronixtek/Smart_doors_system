@@ -18,6 +18,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import apiClient from '../api/client';
 import { Theme } from '../theme';
 import { TTLockCompat, TTLOCK_ERROR_MESSAGES } from '../services/ttlockCompat';
+import { TTLockService } from '../services/ttlockService';
 
 type ScanLockModal = {
   lockMac: string;
@@ -199,6 +200,11 @@ export default function RegisterLockScreen({ navigation }: any) {
           (_code: number, desc: string) => reject(new Error(desc))
         );
       });
+
+      // Set the lock's clock the moment it is paired. A freshly initialised
+      // lock has an unset clock, and everything time-validated is measured
+      // against it: credential validity windows and every log timestamp.
+      await TTLockService.syncLockTimeQuietly(lockData);
 
       await apiClient.post('/locks/register', {
         accessPointId: selectedAP,
