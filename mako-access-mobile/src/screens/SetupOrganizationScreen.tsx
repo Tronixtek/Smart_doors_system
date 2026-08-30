@@ -14,6 +14,7 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import SelectField from '../components/SelectField';
 import apiClient from '../api/client';
+import { getApiErrorMessage } from '../api/errors';
 import { useAuthStore } from '../store/authStore';
 import { Theme } from '../theme';
 
@@ -60,7 +61,7 @@ export default function SetupOrganizationScreen({ navigation, route }: any) {
         ]);
       }
     } catch (error: any) {
-      Alert.alert('Save Failed', error.response?.data?.message || 'Something went wrong');
+      Alert.alert('Save Failed', getApiErrorMessage(error, 'Something went wrong'));
     } finally {
       setLoading(false);
     }
@@ -81,7 +82,7 @@ export default function SetupOrganizationScreen({ navigation, route }: any) {
               await apiClient.delete(`/organizations/${organization._id}`);
               navigation.navigate('Dashboard');
             } catch (error: any) {
-              Alert.alert('Error', error.response?.data?.message || 'Failed to delete organization');
+              Alert.alert('Error', getApiErrorMessage(error, 'Failed to delete organization'));
             } finally {
               setLoading(false);
             }

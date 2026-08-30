@@ -14,6 +14,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import { Theme } from '../theme';
 import { TTLockService } from '../services/ttlockService';
 import apiClient from '../api/client';
+import { getApiErrorMessage } from '../api/errors';
 
 const CREDENTIAL_LABELS: Record<string, string> = {
   PASSCODE: 'PIN',
@@ -59,7 +60,7 @@ export default function ManageCredentialsScreen({ route, navigation }: any) {
       // Surfaced in the UI rather than only logged - a release build has no
       // console, so a silent failure here is undiagnosable on a real device.
       setLoadError(
-        error.response?.data?.message || error.message || 'Could not load credentials'
+        getApiErrorMessage(error, 'Could not load credentials')
       );
     } finally {
       setLoading(false);
@@ -125,9 +126,7 @@ export default function ManageCredentialsScreen({ route, navigation }: any) {
             } catch (error: any) {
               Alert.alert(
                 'Removal Failed',
-                error.response?.data?.message ||
-                  error.message ||
-                  'Could not remove it from the lock. Move closer and try again.'
+                getApiErrorMessage(error, 'Could not remove it from the lock. Move closer and try again.')
               );
             } finally {
               setDeletingId(null);
@@ -181,9 +180,7 @@ export default function ManageCredentialsScreen({ route, navigation }: any) {
             } catch (error: any) {
               Alert.alert(
                 'Clear Failed',
-                error.response?.data?.message ||
-                  error.message ||
-                  `Could not clear ${label}s. Move closer to the lock and try again.`
+                getApiErrorMessage(error, `Could not clear ${label}s. Move closer to the lock and try again.`)
               );
             } finally {
               setClearingType(null);

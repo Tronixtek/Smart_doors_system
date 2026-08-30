@@ -13,6 +13,7 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import apiClient from '../api/client';
+import { getApiErrorMessage } from '../api/errors';
 import { useAuthStore } from '../store/authStore';
 import { Theme } from '../theme';
 
@@ -45,7 +46,7 @@ export default function RegisterScreen({ navigation }: any) {
       });
       setAuth(response.data.token, response.data.user);
     } catch (error: any) {
-      Alert.alert('Registration Failed', error.response?.data?.message || 'Something went wrong');
+      Alert.alert('Registration Failed', getApiErrorMessage(error, 'Something went wrong'));
     } finally {
       setLoading(false);
     }

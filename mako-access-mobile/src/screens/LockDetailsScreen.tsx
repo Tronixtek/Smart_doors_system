@@ -15,6 +15,7 @@ import { Theme } from '../theme';
 import { TTLockService } from '../services/ttlockService';
 import { TTLOCK_EVENTS, TTLockCompat } from '../services/ttlockCompat';
 import apiClient from '../api/client';
+import { getApiErrorMessage } from '../api/errors';
 
 /** How each lock event should read in the history list. */
 const OUTCOME_STYLES: Record<string, { icon: any; color: string; tint: string; text: string }> = {
@@ -104,7 +105,7 @@ export default function LockDetailsScreen({ route, navigation }: any) {
               setRecentLogs([]);
               Alert.alert('Success', 'Access history cleared from app.');
             } catch (error: any) {
-              Alert.alert('Error', error.response?.data?.message || 'Failed to clear history');
+              Alert.alert('Error', getApiErrorMessage(error, 'Failed to clear history'));
             } finally {
               setLoading(false);
             }
@@ -123,7 +124,7 @@ export default function LockDetailsScreen({ route, navigation }: any) {
       setModalVisible(false);
       navigation.goBack(); // Refresh dashboard
     } catch (error: any) {
-      Alert.alert('Error', error.response?.data?.message || 'Failed to update lock');
+      Alert.alert('Error', getApiErrorMessage(error, 'Failed to update lock'));
     } finally {
       setLoading(false);
     }
@@ -144,7 +145,7 @@ export default function LockDetailsScreen({ route, navigation }: any) {
               await apiClient.delete(`/locks/${lock._id}`);
               navigation.goBack();
             } catch (error: any) {
-              Alert.alert('Error', error.response?.data?.message || 'Failed to delete lock');
+              Alert.alert('Error', getApiErrorMessage(error, 'Failed to delete lock'));
             } finally {
               setLoading(false);
             }
@@ -184,7 +185,7 @@ export default function LockDetailsScreen({ route, navigation }: any) {
       setPin('');
       setCredentialName('');
     } catch (error: any) {
-      Alert.alert('Failed', error.message || 'Could not add PIN');
+      Alert.alert('Failed', getApiErrorMessage(error, 'Could not add PIN'));
     } finally {
       setLoading(false);
     }
@@ -217,7 +218,7 @@ export default function LockDetailsScreen({ route, navigation }: any) {
       setModalVisible(false);
       setCredentialName('');
     } catch (error: any) {
-      Alert.alert('Failed', error.message || 'Could not add IC card');
+      Alert.alert('Failed', getApiErrorMessage(error, 'Could not add IC card'));
       setModalVisible(false);
     }
   };
@@ -249,7 +250,7 @@ export default function LockDetailsScreen({ route, navigation }: any) {
       setModalVisible(false);
       setCredentialName('');
     } catch (error: any) {
-      Alert.alert('Failed', error.message || 'Could not add fingerprint');
+      Alert.alert('Failed', getApiErrorMessage(error, 'Could not add fingerprint'));
       setModalVisible(false);
     }
   };

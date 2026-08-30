@@ -14,6 +14,7 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import SelectField from '../components/SelectField';
 import apiClient from '../api/client';
+import { getApiErrorMessage } from '../api/errors';
 import { Theme } from '../theme';
 
 export default function CreateAccessPointScreen({ navigation, route }: any) {
@@ -79,7 +80,7 @@ export default function CreateAccessPointScreen({ navigation, route }: any) {
         ]);
       }
     } catch (error: any) {
-      Alert.alert('Error', error.response?.data?.message || 'Failed to save access point');
+      Alert.alert('Error', getApiErrorMessage(error, 'Failed to save access point'));
     } finally {
       setLoading(false);
     }
@@ -100,7 +101,7 @@ export default function CreateAccessPointScreen({ navigation, route }: any) {
               await apiClient.delete(`/access-points/${accessPoint._id}`);
               navigation.goBack();
             } catch (error: any) {
-              Alert.alert('Error', error.response?.data?.message || 'Failed to delete access point');
+              Alert.alert('Error', getApiErrorMessage(error, 'Failed to delete access point'));
             } finally {
               setLoading(false);
             }

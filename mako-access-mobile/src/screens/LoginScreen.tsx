@@ -12,7 +12,7 @@ import {
   ScrollView,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import apiClient, { API_URL } from '../api/client';
+import apiClient from '../api/client';
 import { useAuthStore } from '../store/authStore';
 import { Theme } from '../theme';
 
@@ -33,21 +33,18 @@ export default function LoginScreen({ navigation }: any) {
 
     setLoading(true);
     try {
-      console.log('Attempting login against API:', API_URL);
       const response = await apiClient.post('/auth/login', { email, password });
       setAuth(response.data.token, response.data.user);
+      // Leave the spinner up: setAuth swaps the navigator over to the
+      // dashboard, so this screen unmounts rather than returning to idle.
     } catch (error: any) {
-      console.error('Login request failed:', error);
-      let message = 'Something went wrong. Please check your network connection.';
-      if (error.response) {
-        message = error.response.data?.message || `Server error: ${error.response.status}`;
-      } else if (error.request) {
-        message = `Could not reach the server at ${API_URL}. Make sure the backend is running, your phone/emulator can reach that IP, and Expo was restarted after updating .env.`;
-      }
+      // Never surface the server address or transport details to the user.
+      const message = error.response
+        ? error.response.data?.message || 'Something went wrong. Please try again.'
+        : 'Connection failed. Check your internet connection and try again.';
+
       Alert.alert('Login Failed', message);
-    } finally {
-      setLoading(true); // Keep loading true during transition
-      setTimeout(() => setLoading(false), 500);
+      setLoading(false);
     }
   };
 
