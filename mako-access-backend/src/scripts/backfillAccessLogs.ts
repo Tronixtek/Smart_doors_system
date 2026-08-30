@@ -15,7 +15,8 @@
  */
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
-import { AccessLog, AccessMethod } from '../models/AccessLog';
+import { AccessLog, AccessMethod, AccessOutcome } from '../models/AccessLog';
+import { lookupLogOperate } from '../utils/ttlockLogTypes';
 import { LockKey } from '../models/LockKey';
 
 dotenv.config();
@@ -32,18 +33,6 @@ const CREDENTIAL_ID_FIELDS = [
   'fingerprintNumber',
   'credentialNumber',
 ];
-
-const RECORD_TYPE_METHODS: { [key: number]: string } = {
-  1: 'APP',
-  4: 'PASSCODE',
-  7: 'PASSCODE',
-  8: 'FINGERPRINT',
-  10: 'KEY',
-  15: 'CARD',
-  17: 'CARD',
-  20: 'FINGERPRINT',
-  21: 'FINGERPRINT',
-};
 
 const extractCredentialIdentifier = (logData: any): string | undefined => {
   for (const field of CREDENTIAL_ID_FIELDS) {
@@ -110,16 +99,19 @@ const backfill = async () => {
     }
 
     const credentials = await getCredentials(log.lockId.toString());
+    const operate = lookupLogOperate(logData?.recordType);
     const credentialIdentifier = extractCredentialIdentifier(logData);
     const enrolled = credentialIdentifier ? credentials.get(credentialIdentifier) : undefined;
 
-    const method = enrolled
-      ? keyTypeToMethod(enrolled.keyType)
-      : RECORD_TYPE_METHODS[logData?.recordType] || 'OTHER';
+    const outcome = operate.outcome as AccessOutcome;
+    const method =
+      enrolled && outcome === 'GRANTED' ? keyTypeToMethod(enrolled.keyType) : operate.method;
 
     const credentialName = enrolled
       ? enrolled.name
-      : logData?.username || logData?.name || describeCredential(method, credentialIdentifier);
+      : logData?.username ||
+        logData?.name ||
+        describeCredential(operate.method, credentialIdentifier);
 
     const timestamp = new Date(
       logData?.operateDate || logData?.serverDate || logData?.timestamp || log.timestamp
@@ -128,18 +120,23 @@ const backfill = async () => {
     const isChanged =
       log.credentialName !== credentialName ||
       log.method !== method ||
+      log.outcome !== outcome ||
+      log.eventLabel !== operate.label ||
       log.credentialIdentifier !== credentialIdentifier ||
       log.timestamp.getTime() !== timestamp.getTime();
 
     if (!isChanged) continue;
 
     changed++;
-    const key = `${log.method} "${log.credentialName}"  ->  ${method} "${credentialName}"`;
+    const key = `${log.outcome || '-'}/${log.method} "${log.credentialName}"  ->  ${outcome}/${method} "${credentialName}" (${operate.label})`;
     summary[key] = (summary[key] || 0) + 1;
 
     if (commit) {
       log.credentialName = credentialName;
       log.method = method as AccessMethod;
+      log.outcome = outcome;
+      log.eventLabel = operate.label;
+      log.success = outcome === 'GRANTED';
       log.credentialIdentifier = credentialIdentifier;
       log.timestamp = timestamp;
       await log.save();

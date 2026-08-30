@@ -9,6 +9,14 @@ export enum AccessMethod {
   OTHER = 'OTHER'
 }
 
+export enum AccessOutcome {
+  GRANTED = 'GRANTED',
+  DENIED = 'DENIED',
+  MANAGEMENT = 'MANAGEMENT',
+  LOCKED = 'LOCKED',
+  SYSTEM = 'SYSTEM'
+}
+
 export interface IAccessLog extends Document {
   organizationId: mongoose.Types.ObjectId;
   lockId: mongoose.Types.ObjectId;
@@ -19,6 +27,11 @@ export interface IAccessLog extends Document {
   // LockKey.keyIdentifier to work out who the person actually was.
   credentialIdentifier?: string;
   method: AccessMethod;
+  // What actually happened. The lock sends no success flag, so this is derived
+  // from the record type - a wrong PIN and a valid PIN are different types.
+  outcome: AccessOutcome;
+  // Human-readable description of the exact lock event.
+  eventLabel?: string;
   timestamp: Date;
   success: boolean;
   rawLogData?: string; // Optional original log from SDK
@@ -32,6 +45,13 @@ const AccessLogSchema = new Schema<IAccessLog>(
     credentialName: { type: String, required: true },
     credentialIdentifier: { type: String },
     method: { type: String, enum: Object.values(AccessMethod), required: true },
+    outcome: {
+      type: String,
+      enum: Object.values(AccessOutcome),
+      default: AccessOutcome.GRANTED,
+      index: true,
+    },
+    eventLabel: { type: String },
     timestamp: { type: Date, required: true },
     success: { type: Boolean, default: true },
     rawLogData: { type: String },

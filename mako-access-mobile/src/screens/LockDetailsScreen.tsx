@@ -16,6 +16,15 @@ import { TTLockService } from '../services/ttlockService';
 import { TTLOCK_EVENTS, TTLockCompat } from '../services/ttlockCompat';
 import apiClient from '../api/client';
 
+/** How each lock event should read in the history list. */
+const OUTCOME_STYLES: Record<string, { icon: any; color: string; tint: string; text: string }> = {
+  GRANTED: { icon: 'checkmark-circle', color: '#10B981', tint: '#ECFDF5', text: 'Granted' },
+  DENIED: { icon: 'close-circle', color: '#EF4444', tint: '#FEF2F2', text: 'Denied' },
+  MANAGEMENT: { icon: 'construct-outline', color: '#6366F1', tint: '#EEF2FF', text: 'Change' },
+  LOCKED: { icon: 'lock-closed', color: '#6B7280', tint: '#F3F4F6', text: 'Locked' },
+  SYSTEM: { icon: 'information-circle-outline', color: '#6B7280', tint: '#F3F4F6', text: 'System' },
+};
+
 export default function LockDetailsScreen({ route, navigation }: any) {
   const { lock } = route.params;
   const [loading, setLoading] = useState(false);
@@ -335,30 +344,37 @@ export default function LockDetailsScreen({ route, navigation }: any) {
         </View>
 
         {recentLogs.length > 0 ? (
-          recentLogs.map((log) => (
-            <View key={log._id} style={styles.logCard}>
-              <View style={styles.logIconBox}>
-                <Ionicons 
-                  name={
-                    log.method === 'FINGERPRINT' ? 'finger-print' :
-                    log.method === 'CARD' ? 'card' :
-                    log.method === 'PASSCODE' ? 'apps' : 'key'
-                  } 
-                  size={18} 
-                  color={Theme.colors.textLight} 
-                />
+          recentLogs.map((log) => {
+            const outcome = OUTCOME_STYLES[log.outcome] || OUTCOME_STYLES.SYSTEM;
+            return (
+              <View key={log._id} style={styles.logCard}>
+                <View style={[styles.logIconBox, { backgroundColor: outcome.tint }]}>
+                  <Ionicons
+                    name={
+                      log.method === 'FINGERPRINT' ? 'finger-print' :
+                      log.method === 'CARD' ? 'card' :
+                      log.method === 'PASSCODE' ? 'apps' :
+                      log.method === 'APP' ? 'phone-portrait-outline' : 'key'
+                    }
+                    size={18}
+                    color={outcome.color}
+                  />
+                </View>
+                <View style={styles.logInfo}>
+                  <Text style={styles.logCredentialName}>{log.credentialName}</Text>
+                  <Text style={styles.logMeta}>
+                    {log.eventLabel || log.method} · {new Date(log.timestamp).toLocaleString()}
+                  </Text>
+                </View>
+                <View style={[styles.outcomeBadge, { backgroundColor: outcome.tint }]}>
+                  <Ionicons name={outcome.icon} size={13} color={outcome.color} />
+                  <Text style={[styles.outcomeBadgeText, { color: outcome.color }]}>
+                    {outcome.text}
+                  </Text>
+                </View>
               </View>
-              <View style={styles.logInfo}>
-                <Text style={styles.logCredentialName}>{log.credentialName}</Text>
-                <Text style={styles.logMeta}>
-                  {log.method} • {new Date(log.timestamp).toLocaleString()}
-                </Text>
-              </View>
-              {log.success && (
-                <Ionicons name="checkmark-circle" size={20} color={Theme.colors.secondary} />
-              )}
-            </View>
-          ))
+            );
+          })
         ) : (
           <View style={styles.emptyLogs}>
             <Text style={styles.emptyLogsText}>No access records yet. Sync with the lock to see recent activity.</Text>
@@ -501,6 +517,8 @@ const styles = StyleSheet.create({
   logIconBox: { width: 36, height: 36, borderRadius: 18, backgroundColor: '#F3F4F6', justifyContent: 'center', alignItems: 'center', marginRight: 12 },
   logInfo: { flex: 1 },
   logCredentialName: { fontSize: 14, fontWeight: '700', color: Theme.colors.text },
+  outcomeBadge: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 8, paddingVertical: 4, borderRadius: Theme.borderRadius.full, marginLeft: 8 },
+  outcomeBadgeText: { fontSize: 10, fontWeight: '800', marginLeft: 3 },
   logMeta: { fontSize: 11, color: Theme.colors.textLight, marginTop: 2 },
   emptyLogs: { padding: 30, alignItems: 'center', backgroundColor: '#F3F4F6', borderRadius: 15 },
   emptyLogsText: { fontSize: 13, color: Theme.colors.textLight, textAlign: 'center', lineHeight: 20 },

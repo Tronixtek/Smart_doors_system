@@ -2,7 +2,8 @@ import { Router } from 'express';
 import { Lock } from '../models/Lock';
 import { AccessPoint } from '../models/AccessPoint';
 import { LockKey } from '../models/LockKey';
-import { AccessLog, AccessMethod } from '../models/AccessLog';
+import { AccessLog, AccessMethod, AccessOutcome } from '../models/AccessLog';
+import { lookupLogOperate } from '../utils/ttlockLogTypes';
 import { authenticate, AuthRequest } from '../middleware/auth';
 import { getUserOrganizationIds, syncUserOrganizations } from '../utils/organizations';
 
@@ -42,23 +43,6 @@ const extractCredentialIdentifier = (logData: any): string | undefined => {
 };
 
 /**
- * Fallback method when no enrolled credential matches. recordType varies by
- * firmware; these pairings are the ones this hardware actually emits (each
- * credential type reports two codes, one per lock/unlock direction).
- */
-const RECORD_TYPE_METHODS: { [key: number]: string } = {
-  1: 'APP',
-  4: 'PASSCODE',
-  7: 'PASSCODE',
-  8: 'FINGERPRINT',
-  10: 'KEY',
-  15: 'CARD',
-  17: 'CARD',
-  20: 'FINGERPRINT',
-  21: 'FINGERPRINT',
-};
-
-/**
  * Human-readable label for a credential we have no enrolled name for, so the
  * history shows *which* credential opened the door rather than "Unknown User".
  * Passcodes are masked - the raw PIN should not be readable from a log list.
@@ -94,31 +78,35 @@ const keyTypeToMethod = (keyType: string): string =>
   keyType === 'EKEY' ? AccessMethod.APP : keyType;
 
 /**
- * Resolve one raw SDK record into a name + method.
+ * Resolve one raw SDK record into a name, method and outcome.
  *
- * A matched credential is authoritative for *both*: the firmware's recordType
- * codes disagree with the credential actually used (a passcode unlock can
- * report a card code), so when the number matches something we enrolled we
- * trust the enrolment's keyType over recordType.
+ * The record type is authoritative for *what happened* - the lock sends no
+ * success flag, and a wrong PIN (type 7) looks identical to a valid one (type
+ * 4) in every other field. A matched credential supplies the person's name,
+ * and its type is only trusted for successful events: on a denied attempt the
+ * number reported is precisely the one that did NOT open the door, so
+ * relabelling it by the credential type would misreport the event.
  */
 const resolveLogEntry = (logData: any, credentials: Map<string, any>) => {
+  const operate = lookupLogOperate(logData?.recordType);
   const credentialIdentifier = extractCredentialIdentifier(logData);
   const enrolled = credentialIdentifier ? credentials.get(credentialIdentifier) : undefined;
 
-  if (enrolled) {
-    return {
-      credentialIdentifier,
-      credentialName: enrolled.name,
-      method: keyTypeToMethod(enrolled.keyType),
-    };
-  }
+  const outcome = operate.outcome as AccessOutcome;
+  const method =
+    enrolled && outcome === 'GRANTED' ? keyTypeToMethod(enrolled.keyType) : operate.method;
 
-  const method = RECORD_TYPE_METHODS[logData?.recordType] || 'OTHER';
+  const credentialName = enrolled
+    ? enrolled.name
+    : logData?.username || logData?.name || describeCredential(operate.method, credentialIdentifier);
+
   return {
     credentialIdentifier,
-    credentialName:
-      logData?.username || logData?.name || describeCredential(method, credentialIdentifier),
+    credentialName,
     method,
+    outcome,
+    eventLabel: operate.label,
+    success: outcome === 'GRANTED',
   };
 };
 
@@ -296,10 +284,8 @@ router.post('/:lockId/logs', async (req: AuthRequest, res) => {
 
     const createdLogs = [];
     for (const logData of logs) {
-      const { credentialName, credentialIdentifier, method } = resolveLogEntry(
-        logData,
-        credentials
-      );
+      const { credentialName, credentialIdentifier, method, outcome, eventLabel, success } =
+        resolveLogEntry(logData, credentials);
 
       // operateDate is what this firmware reports; the other names are for
       // SDK variants. Without it every record was stamped with the sync time.
@@ -308,6 +294,7 @@ router.post('/:lockId/logs', async (req: AuthRequest, res) => {
       );
 
       if (
+        outcome === 'GRANTED' &&
         method === 'APP' &&
         appUnlockTimes.some((time) => Math.abs(time - timestamp.getTime()) <= DEDUPE_WINDOW_MS)
       ) {
@@ -321,8 +308,10 @@ router.post('/:lockId/logs', async (req: AuthRequest, res) => {
         credentialName,
         credentialIdentifier,
         method: method,
+        outcome,
+        eventLabel,
         timestamp,
-        success: logData.success === undefined ? true : Boolean(logData.success),
+        success,
         rawLogData: JSON.stringify(logData),
       });
     }
@@ -367,6 +356,8 @@ router.post('/:lockId/unlock-events', async (req: AuthRequest, res) => {
       accessPointId: lock.accessPointId?._id || lock.accessPointId,
       credentialName: fullName || req.user.email || 'App user',
       method: AccessMethod.APP,
+      outcome: AccessOutcome.GRANTED,
+      eventLabel: 'Unlocked with the app',
       timestamp: new Date(),
       success: req.body?.success === undefined ? true : Boolean(req.body.success),
     });
@@ -399,7 +390,10 @@ router.get('/:lockId/logs', async (req: AuthRequest, res) => {
       return {
         ...log.toObject(),
         credentialName: enrolled ? enrolled.name : log.credentialName,
-        method: enrolled ? keyTypeToMethod(enrolled.keyType) : log.method,
+        method:
+          enrolled && log.outcome === AccessOutcome.GRANTED
+            ? keyTypeToMethod(enrolled.keyType)
+            : log.method,
       };
     });
 
