@@ -8,6 +8,7 @@ import DashboardScreen from './src/screens/DashboardScreen';
 import RegisterLockScreen from './src/screens/RegisterLockScreen';
 import LockDetailsScreen from './src/screens/LockDetailsScreen';
 import CreateAccessPointScreen from './src/screens/CreateAccessPointScreen';
+import ManageCredentialsScreen from './src/screens/ManageCredentialsScreen';
 import SetupOrganizationScreen from './src/screens/SetupOrganizationScreen';
 import { useAuthStore } from './src/store/authStore';
 
@@ -31,6 +32,7 @@ export default function App() {
             <Stack.Screen name="RegisterLock" component={RegisterLockScreen} options={{ title: 'Register New Lock' }} />
             <Stack.Screen name="LockDetails" component={LockDetailsScreen} options={{ title: 'Lock Settings' }} />
             <Stack.Screen name="CreateAccessPoint" component={CreateAccessPointScreen} options={{ title: 'Add Access Point' }} />
+            <Stack.Screen name="ManageCredentials" component={ManageCredentialsScreen} options={{ title: 'Manage Credentials' }} />
           </>
         )}
       </Stack.Navigator>

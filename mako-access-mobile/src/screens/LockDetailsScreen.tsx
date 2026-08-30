@@ -16,20 +16,6 @@ import { TTLockService } from '../services/ttlockService';
 import { TTLOCK_EVENTS, TTLockCompat } from '../services/ttlockCompat';
 import apiClient from '../api/client';
 
-const CREDENTIAL_LABELS: Record<string, string> = {
-  PASSCODE: 'PIN',
-  CARD: 'IC Card',
-  FINGERPRINT: 'Fingerprint',
-  EKEY: 'eKey',
-};
-
-const CREDENTIAL_ICONS: Record<string, any> = {
-  PASSCODE: 'apps-outline',
-  CARD: 'card-outline',
-  FINGERPRINT: 'finger-print-outline',
-  EKEY: 'key-outline',
-};
-
 export default function LockDetailsScreen({ route, navigation }: any) {
   const { lock } = route.params;
   const [loading, setLoading] = useState(false);
@@ -39,15 +25,11 @@ export default function LockDetailsScreen({ route, navigation }: any) {
   const [credentialName, setCredentialName] = useState('');
   const [progressText, setProgressText] = useState('');
   const [recentLogs, setRecentLogs] = useState<any[]>([]);
-  const [credentials, setCredentials] = useState<any[]>([]);
-  const [deletingId, setDeletingId] = useState<string | null>(null);
-  const [clearingType, setClearingType] = useState<string | null>(null);
   const [syncing, setSyncing] = useState(false);
   const [editLockName, setEditLockName] = useState(lock.lockName);
 
   useEffect(() => {
     fetchLogs();
-    fetchCredentials();
     const emitter = TTLockCompat.getEmitter();
     if (!emitter) return;
     
@@ -77,116 +59,6 @@ export default function LockDetailsScreen({ route, navigation }: any) {
     } catch (error) {
       console.error('Failed to fetch logs', error);
     }
-  };
-
-  const fetchCredentials = async () => {
-    try {
-      const response = await apiClient.get(`/locks/${lock._id}/credentials`);
-      setCredentials(response.data);
-    } catch (error) {
-      console.error('Failed to fetch credentials', error);
-    }
-  };
-
-  /**
-   * Remove one credential from the lock hardware first, then from our records.
-   * If the Bluetooth delete fails we keep the record - otherwise the app would
-   * forget about a credential that still opens the door.
-   */
-  const handleDeleteCredential = (credential: any) => {
-    Alert.alert(
-      'Remove Credential',
-      `Remove ${credential.name}'s ${CREDENTIAL_LABELS[credential.keyType] || 'credential'} from ${lock.lockName}? Be near the lock - it must be deleted from the hardware too.`,
-      [
-        { text: 'Cancel', style: 'cancel' },
-        {
-          text: 'Remove',
-          style: 'destructive',
-          onPress: async () => {
-            setDeletingId(credential._id);
-            try {
-              const hasPermission = await TTLockService.requestPermissions();
-              if (!hasPermission) {
-                Alert.alert('Permission Denied', 'Bluetooth permission is required.');
-                return;
-              }
-
-              if (credential.keyType === 'PASSCODE') {
-                await TTLockService.deletePasscode(lock.lockData, credential.keyIdentifier);
-              } else if (credential.keyType === 'CARD') {
-                await TTLockService.deleteCard(lock.lockData, credential.keyIdentifier);
-              } else if (credential.keyType === 'FINGERPRINT') {
-                await TTLockService.deleteFingerprint(lock.lockData, credential.keyIdentifier);
-              }
-
-              await apiClient.delete(`/locks/${lock._id}/credentials/${credential._id}`);
-              Alert.alert('Removed', `${credential.name}'s access has been revoked.`);
-              fetchCredentials();
-              fetchLogs();
-            } catch (error: any) {
-              Alert.alert(
-                'Removal Failed',
-                error.message || 'Could not remove the credential from the lock.'
-              );
-            } finally {
-              setDeletingId(null);
-            }
-          },
-        },
-      ]
-    );
-  };
-
-  /**
-   * Wipe every credential of one type from the hardware. This is the only way
-   * to remove credentials that were enrolled directly on the lock, which the
-   * app never recorded and so cannot delete one by one.
-   */
-  const handleClearAll = (keyType: 'FINGERPRINT' | 'CARD' | 'PASSCODE') => {
-    const label = CREDENTIAL_LABELS[keyType].toLowerCase();
-
-    Alert.alert(
-      `Clear All ${CREDENTIAL_LABELS[keyType]}s`,
-      `This deletes every ${label} from ${lock.lockName}, including any added directly on the lock. Everyone using a ${label} will lose access until re-enrolled. Be near the lock.`,
-      [
-        { text: 'Cancel', style: 'cancel' },
-        {
-          text: 'Clear All',
-          style: 'destructive',
-          onPress: async () => {
-            setClearingType(keyType);
-            try {
-              const hasPermission = await TTLockService.requestPermissions();
-              if (!hasPermission) {
-                Alert.alert('Permission Denied', 'Bluetooth permission is required.');
-                return;
-              }
-
-              if (keyType === 'FINGERPRINT') {
-                await TTLockService.clearAllFingerprints(lock.lockData);
-              } else if (keyType === 'CARD') {
-                await TTLockService.clearAllCards(lock.lockData);
-              } else {
-                // Resetting passcodes issues new lockData; persist it or the
-                // app can no longer operate this lock.
-                const newLockData = await TTLockService.resetPasscodes(lock.lockData);
-                await apiClient.put(`/locks/${lock._id}`, { lockData: newLockData });
-                lock.lockData = newLockData;
-              }
-
-              await apiClient.delete(`/locks/${lock._id}/credentials`, { params: { keyType } });
-              Alert.alert('Cleared', `All ${label}s have been removed from the lock.`);
-              fetchCredentials();
-              fetchLogs();
-            } catch (error: any) {
-              Alert.alert('Clear Failed', error.message || `Could not clear ${label}s.`);
-            } finally {
-              setClearingType(null);
-            }
-          },
-        },
-      ]
-    );
   };
 
   const handleSyncLogs = async () => {
@@ -420,69 +292,19 @@ export default function LockDetailsScreen({ route, navigation }: any) {
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Credentials</Text>
         <Text style={styles.sectionHint}>
-          Removing a credential deletes it from the lock as well. Stay near the lock.
+          View who has access, remove a PIN, card or fingerprint, or wipe credentials added
+          directly on the lock.
         </Text>
-
-        {credentials.length > 0 ? (
-          credentials.map((credential) => (
-            <View key={credential._id} style={styles.credentialCard}>
-              <View style={styles.credentialIconBox}>
-                <Ionicons
-                  name={CREDENTIAL_ICONS[credential.keyType] || 'key-outline'}
-                  size={18}
-                  color={Theme.colors.primary}
-                />
-              </View>
-              <View style={styles.credentialInfo}>
-                <Text style={styles.credentialName}>{credential.name}</Text>
-                <Text style={styles.credentialMeta}>
-                  {CREDENTIAL_LABELS[credential.keyType] || credential.keyType}
-                </Text>
-              </View>
-              <TouchableOpacity
-                style={styles.credentialDelete}
-                onPress={() => handleDeleteCredential(credential)}
-                disabled={deletingId === credential._id}
-                hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-              >
-                {deletingId === credential._id ? (
-                  <ActivityIndicator size="small" color={Theme.colors.error} />
-                ) : (
-                  <Ionicons name="trash-outline" size={18} color={Theme.colors.error} />
-                )}
-              </TouchableOpacity>
-            </View>
-          ))
-        ) : (
-          <View style={styles.emptyLogs}>
-            <Text style={styles.emptyLogsText}>
-              No credentials added through the app yet. Use the buttons above to enrol one.
-            </Text>
+        <TouchableOpacity
+          style={styles.manageRow}
+          onPress={() => navigation.navigate('ManageCredentials', { lock })}
+        >
+          <View style={styles.manageIcon}>
+            <Ionicons name="key-outline" size={18} color={Theme.colors.primary} />
           </View>
-        )}
-
-        <Text style={styles.dangerLabel}>Clear everything on the lock</Text>
-        <Text style={styles.sectionHint}>
-          Wipes credentials added directly on the lock too - the ones the app never recorded.
-        </Text>
-        <View style={styles.dangerRow}>
-          {(['FINGERPRINT', 'CARD', 'PASSCODE'] as const).map((keyType) => (
-            <TouchableOpacity
-              key={keyType}
-              style={styles.dangerButton}
-              onPress={() => handleClearAll(keyType)}
-              disabled={clearingType !== null}
-            >
-              {clearingType === keyType ? (
-                <ActivityIndicator size="small" color={Theme.colors.error} />
-              ) : (
-                <Text style={styles.dangerButtonText}>
-                  All {CREDENTIAL_LABELS[keyType]}s
-                </Text>
-              )}
-            </TouchableOpacity>
-          ))}
-        </View>
+          <Text style={styles.manageRowText}>Manage credentials</Text>
+          <Ionicons name="chevron-forward" size={18} color={Theme.colors.textLight} />
+        </TouchableOpacity>
       </View>
 
       <View style={styles.section}>
@@ -670,16 +492,10 @@ const styles = StyleSheet.create({
   featureLabel: { fontSize: 12, fontWeight: '700', color: Theme.colors.text },
   
   sectionHint: { fontSize: 12, color: Theme.colors.textLight, lineHeight: 18, marginTop: 4, marginBottom: 14 },
-  credentialCard: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#fff', padding: 12, borderRadius: 12, marginBottom: 8 },
-  credentialIconBox: { width: 36, height: 36, borderRadius: 18, backgroundColor: '#EEF2FF', justifyContent: 'center', alignItems: 'center', marginRight: 12 },
-  credentialInfo: { flex: 1 },
-  credentialName: { fontSize: 14, fontWeight: '700', color: Theme.colors.text },
-  credentialMeta: { fontSize: 11, color: Theme.colors.textLight, marginTop: 2 },
-  credentialDelete: { width: 36, height: 36, borderRadius: 18, backgroundColor: '#FEF2F2', justifyContent: 'center', alignItems: 'center' },
-  dangerLabel: { fontSize: 14, fontWeight: '700', color: Theme.colors.text, marginTop: 24 },
-  dangerRow: { flexDirection: 'row', justifyContent: 'space-between' },
-  dangerButton: { flex: 1, height: 42, marginHorizontal: 3, borderRadius: Theme.borderRadius.md, borderWidth: 1, borderColor: '#FECACA', backgroundColor: '#FEF2F2', justifyContent: 'center', alignItems: 'center' },
-  dangerButtonText: { fontSize: 12, fontWeight: '700', color: Theme.colors.error },
+
+  manageRow: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#fff', paddingHorizontal: 14, height: 60, borderRadius: Theme.borderRadius.lg },
+  manageIcon: { width: 38, height: 38, borderRadius: 19, backgroundColor: '#EEF2FF', justifyContent: 'center', alignItems: 'center', marginRight: 12 },
+  manageRowText: { flex: 1, fontSize: 15, fontWeight: '700', color: Theme.colors.text },
 
   logCard: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#fff', padding: 12, borderRadius: 12, marginBottom: 8 },
   logIconBox: { width: 36, height: 36, borderRadius: 18, backgroundColor: '#F3F4F6', justifyContent: 'center', alignItems: 'center', marginRight: 12 },
