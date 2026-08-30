@@ -13,7 +13,7 @@ import {
   Linking,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { Picker } from '@react-native-picker/picker';
+import SelectField from '../components/SelectField';
 import { useFocusEffect } from '@react-navigation/native';
 import apiClient from '../api/client';
 import { Theme } from '../theme';
@@ -226,24 +226,17 @@ export default function RegisterLockScreen({ navigation }: any) {
 
       <View style={styles.section}>
         <Text style={styles.sectionLabel}>Step 1: Assign to Space</Text>
-        <View style={styles.pickerContainer}>
-          <Picker
-            selectedValue={selectedAP}
-            onValueChange={(itemValue) => setSelectedAP(itemValue)}
-            style={styles.picker}
-            dropdownIconColor={Theme.colors.text}
-            mode="dropdown"
-          >
-            {accessPoints.map((ap: any) => (
-              <Picker.Item
-                key={ap._id}
-                label={`${ap.organizationId?.name || 'Org'} • ${ap.name}`}
-                value={ap._id}
-                color={Theme.colors.text}
-              />
-            ))}
-          </Picker>
-        </View>
+        <SelectField
+          title="Assign to access point"
+          placeholder="Select an access point"
+          emptyText="No access points available yet. Create an organization and an access point first."
+          value={selectedAP}
+          onChange={setSelectedAP}
+          options={accessPoints.map((ap: any) => ({
+            label: `${ap.organizationId?.name || 'Org'} • ${ap.name}`,
+            value: ap._id,
+          }))}
+        />
         {accessPoints.length === 0 && (
           <Text style={styles.hint}>No access points available yet. Create an organization and an access point first.</Text>
         )}
@@ -336,19 +329,6 @@ const styles = StyleSheet.create({
   section: { marginBottom: Theme.spacing.xl },
   sectionLabel: { fontSize: 16, fontWeight: '700', color: Theme.colors.text, marginBottom: Theme.spacing.md },
   hint: { fontSize: 14, color: Theme.colors.textLight, marginBottom: Theme.spacing.md, fontStyle: 'italic' },
-  pickerContainer: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: Theme.borderRadius.md,
-    borderWidth: 1,
-    borderColor: Theme.colors.border,
-    height: 55,
-    justifyContent: 'center',
-  },
-  picker: { 
-    height: 55,
-    width: '100%',
-    color: '#000000',
-  },
   selectedAccessPointChip: {flexDirection: 'row',
     alignItems: 'center',
     width: '100%',
@@ -366,8 +346,7 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: '600',
   },
-  picker: { height: 48 },
-  scanButton: { 
+  scanButton: {
     flexDirection: 'row', 
     backgroundColor: Theme.colors.primary, 
     height: 55, 

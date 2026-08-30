@@ -69,6 +69,14 @@ export default function DashboardScreen({ navigation }: any) {
       }
 
       await TTLockService.unlock(lock.lockData);
+
+      // The lock's own log records no identity for a Bluetooth unlock, so tell
+      // the backend who did it while we still know. Never block the unlock on
+      // this - the door is already open by the time we get here.
+      apiClient
+        .post(`/locks/${lock._id}/unlock-events`)
+        .catch((error) => console.error('Failed to record unlock event', error));
+
       Alert.alert('Success', `${lock.lockName} unlocked!`);
     } catch (error: any) {
       Alert.alert('Unlock Failed', error.message || 'Bluetooth connection failed');

@@ -12,7 +12,7 @@ import {
   Platform,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { Picker } from '@react-native-picker/picker';
+import SelectField from '../components/SelectField';
 import apiClient from '../api/client';
 import { useAuthStore } from '../store/authStore';
 import { Theme } from '../theme';
@@ -154,19 +154,17 @@ export default function SetupOrganizationScreen({ navigation, route }: any) {
 
         <View style={styles.inputWrapper}>
           <Text style={styles.label}>Organization type</Text>
-          <View style={styles.pickerContainer}>
-            <Picker
-              selectedValue={type}
-              onValueChange={(itemValue) => setType(itemValue)}
-              style={styles.picker}
-              dropdownIconColor={Theme.colors.text}
-            >
-              <Picker.Item label="Residential / Home" value="RESIDENTIAL" color={Theme.colors.text} />
-              <Picker.Item label="Office / Business" value="OFFICE" color={Theme.colors.text} />
-              <Picker.Item label="Hotel / Rental" value="HOTEL" color={Theme.colors.text} />
-              <Picker.Item label="Other" value="OTHER" color={Theme.colors.text} />
-            </Picker>
-          </View>
+          <SelectField
+            title="Organization type"
+            value={type}
+            onChange={setType}
+            options={[
+              { label: 'Residential / Home', value: 'RESIDENTIAL' },
+              { label: 'Office / Business', value: 'OFFICE' },
+              { label: 'Hotel / Rental', value: 'HOTEL' },
+              { label: 'Other', value: 'OTHER' },
+            ]}
+          />
         </View>
 
         <TouchableOpacity 
@@ -227,14 +225,6 @@ const styles = StyleSheet.create({
     borderColor: Theme.colors.border,
   },
   input: { height: 55, color: '#000000', fontSize: 16 },
-  pickerContainer: {
-    backgroundColor: Theme.colors.white,
-    borderRadius: Theme.borderRadius.lg,
-    borderWidth: 1,
-    borderColor: Theme.colors.border,
-    overflow: 'hidden',
-  },
-  picker: { height: 55 },
   setupButton: {
     backgroundColor: Theme.colors.primary,
     height: 55,

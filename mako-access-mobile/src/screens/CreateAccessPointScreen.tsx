@@ -12,7 +12,7 @@ import {
   Platform,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { Picker } from '@react-native-picker/picker';
+import SelectField from '../components/SelectField';
 import apiClient from '../api/client';
 import { Theme } from '../theme';
 
@@ -129,18 +129,17 @@ export default function CreateAccessPointScreen({ navigation, route }: any) {
           {!isEditing && (
             <View style={styles.inputWrapper}>
               <Text style={styles.label}>Organization</Text>
-              <View style={styles.pickerContainer}>
-                <Picker
-                  selectedValue={organizationId}
-                  onValueChange={(itemValue) => setOrganizationId(itemValue)}
-                  style={styles.picker}
-                  dropdownIconColor={Theme.colors.text}
-                >
-                  {organizations.map((organization) => (
-                    <Picker.Item key={organization._id} label={organization.name} value={organization._id} color={Theme.colors.text} />
-                  ))}
-                </Picker>
-              </View>
+              <SelectField
+                title="Organization"
+                placeholder="Select an organization"
+                emptyText="You have no organizations yet. Create one first."
+                value={organizationId}
+                onChange={setOrganizationId}
+                options={organizations.map((organization) => ({
+                  label: organization.name,
+                  value: organization._id,
+                }))}
+              />
             </View>
           )}
 
@@ -164,19 +163,17 @@ export default function CreateAccessPointScreen({ navigation, route }: any) {
 
           <View style={styles.inputWrapper}>
             <Text style={styles.label}>Type</Text>
-            <View style={styles.pickerContainer}>
-              <Picker
-                selectedValue={type}
-                onValueChange={(itemValue) => setType(itemValue)}
-                style={styles.picker}
-                dropdownIconColor={Theme.colors.text}
-              >
-                <Picker.Item label="Door" value="DOOR" color={Theme.colors.text} />
-                <Picker.Item label="Gate" value="GATE" color={Theme.colors.text} />
-                <Picker.Item label="Cabinet" value="CABINET" color={Theme.colors.text} />
-                <Picker.Item label="Lift" value="LIFT" color={Theme.colors.text} />
-              </Picker>
-            </View>
+            <SelectField
+              title="Access point type"
+              value={type}
+              onChange={setType}
+              options={[
+                { label: 'Door', value: 'DOOR' },
+                { label: 'Gate', value: 'GATE' },
+                { label: 'Cabinet', value: 'CABINET' },
+                { label: 'Lift', value: 'LIFT' },
+              ]}
+            />
           </View>
 
           <View style={styles.inputWrapper}>
@@ -239,14 +236,6 @@ const styles = StyleSheet.create({
     borderColor: Theme.colors.border,
   },
   input: { height: 55, color: '#000000', fontSize: 16 },
-  pickerContainer: {
-    backgroundColor: Theme.colors.white,
-    borderRadius: Theme.borderRadius.lg,
-    borderWidth: 1,
-    borderColor: Theme.colors.border,
-    overflow: 'hidden',
-  },
-  picker: { height: 55 },
   createButton: {
     backgroundColor: Theme.colors.primary,
     height: 55,
