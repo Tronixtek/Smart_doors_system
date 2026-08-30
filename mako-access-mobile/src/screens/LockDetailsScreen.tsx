@@ -26,6 +26,22 @@ const OUTCOME_STYLES: Record<string, { icon: any; color: string; tint: string; t
   SYSTEM: { icon: 'information-circle-outline', color: '#6B7280', tint: '#F3F4F6', text: 'System' },
 };
 
+/**
+ * Credentials are backdated by an hour and run for a year.
+ *
+ * The lock checks validity against its own clock. We sync that clock before
+ * enrolling, but a lock that has been power-cycled or has simply drifted can
+ * still be a few minutes behind - and a start time even slightly in the lock's
+ * future means the credential is refused despite enrolling cleanly.
+ */
+const CREDENTIAL_START_GRACE_MS = 60 * 60 * 1000;
+const CREDENTIAL_VALID_MS = 365 * 24 * 60 * 60 * 1000;
+
+const credentialValidity = () => {
+  const startDate = Date.now() - CREDENTIAL_START_GRACE_MS;
+  return { startDate, endDate: startDate + CREDENTIAL_VALID_MS };
+};
+
 export default function LockDetailsScreen({ route, navigation }: any) {
   const { lock } = route.params;
   const [loading, setLoading] = useState(false);
@@ -36,6 +52,7 @@ export default function LockDetailsScreen({ route, navigation }: any) {
   const [progressText, setProgressText] = useState('');
   const [recentLogs, setRecentLogs] = useState<any[]>([]);
   const [syncing, setSyncing] = useState(false);
+  const [syncingClock, setSyncingClock] = useState(false);
   const [editLockName, setEditLockName] = useState(lock.lockName);
 
   useEffect(() => {
@@ -68,6 +85,40 @@ export default function LockDetailsScreen({ route, navigation }: any) {
       setRecentLogs(response.data);
     } catch (error) {
       console.error('Failed to fetch logs', error);
+    }
+  };
+
+  /**
+   * Push the phone's time onto the lock and report the drift that was
+   * corrected. A lock running behind refuses credentials that were enrolled
+   * "from now", because to the lock that start time has not arrived yet.
+   */
+  const handleSyncClock = async () => {
+    setSyncingClock(true);
+    try {
+      const hasPermission = await TTLockService.requestPermissions();
+      if (!hasPermission) {
+        Alert.alert('Permission Denied', 'Bluetooth permission is required.');
+        return;
+      }
+
+      const before = await TTLockService.getLockTime(lock.lockData);
+      const driftMs = Date.now() - before;
+      await TTLockService.setLockTime(lock.lockData);
+
+      const driftMinutes = Math.round(Math.abs(driftMs) / 60000);
+      Alert.alert(
+        'Lock Clock Synced',
+        driftMinutes < 2
+          ? 'The lock clock was already correct.'
+          : `The lock was ${driftMinutes} minute${driftMinutes === 1 ? '' : 's'} ${
+              driftMs > 0 ? 'behind' : 'ahead'
+            } and has been corrected. Cards, PINs and fingerprints that were being refused should work now.`
+      );
+    } catch (error: any) {
+      Alert.alert('Sync Failed', getApiErrorMessage(error, 'Could not reach the lock. Move closer and try again.'));
+    } finally {
+      setSyncingClock(false);
     }
   };
 
@@ -167,8 +218,8 @@ export default function LockDetailsScreen({ route, navigation }: any) {
 
     setLoading(true);
     try {
-      const startDate = Date.now();
-      const endDate = startDate + 365 * 24 * 60 * 60 * 1000; // 1 year
+      await TTLockService.syncLockTimeQuietly(lock.lockData);
+      const { startDate, endDate } = credentialValidity();
       await TTLockService.addPasscode(lock.lockData, pin, startDate, endDate);
       
       // Save to backend
@@ -201,8 +252,8 @@ export default function LockDetailsScreen({ route, navigation }: any) {
     setProgressText('Preparing lock for IC card...');
     
     try {
-      const startDate = Date.now();
-      const endDate = startDate + 365 * 24 * 60 * 60 * 1000;
+      await TTLockService.syncLockTimeQuietly(lock.lockData);
+      const { startDate, endDate } = credentialValidity();
       const cardNumber = await TTLockService.addCard(lock.lockData, startDate, endDate);
       
       // Save to backend
@@ -233,8 +284,8 @@ export default function LockDetailsScreen({ route, navigation }: any) {
     setProgressText('Preparing fingerprint sensor...');
     
     try {
-      const startDate = Date.now();
-      const endDate = startDate + 365 * 24 * 60 * 60 * 1000;
+      await TTLockService.syncLockTimeQuietly(lock.lockData);
+      const { startDate, endDate } = credentialValidity();
       const fingerNumber = await TTLockService.addFingerprint(lock.lockData, startDate, endDate);
       
       // Save to backend
@@ -271,6 +322,29 @@ export default function LockDetailsScreen({ route, navigation }: any) {
         </View>
         <Text style={styles.lockName}>{lock.lockName}</Text>
         <Text style={styles.lockMac}>{lock.lockMac}</Text>
+      </View>
+
+      <View style={styles.section}>
+        <TouchableOpacity
+          style={styles.clockRow}
+          onPress={handleSyncClock}
+          disabled={syncingClock}
+        >
+          <View style={styles.clockIcon}>
+            <Ionicons name="time-outline" size={18} color={Theme.colors.primary} />
+          </View>
+          <View style={styles.clockInfo}>
+            <Text style={styles.clockTitle}>Sync lock clock</Text>
+            <Text style={styles.clockHint}>
+              Fixes cards or PINs that register fine but get refused
+            </Text>
+          </View>
+          {syncingClock ? (
+            <ActivityIndicator size="small" color={Theme.colors.primary} />
+          ) : (
+            <Ionicons name="chevron-forward" size={18} color={Theme.colors.textLight} />
+          )}
+        </TouchableOpacity>
       </View>
 
       <View style={styles.section}>
@@ -510,6 +584,11 @@ const styles = StyleSheet.create({
   
   sectionHint: { fontSize: 12, color: Theme.colors.textLight, lineHeight: 18, marginTop: 4, marginBottom: 14 },
 
+  clockRow: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#fff', paddingHorizontal: 14, paddingVertical: 12, borderRadius: Theme.borderRadius.lg },
+  clockIcon: { width: 38, height: 38, borderRadius: 19, backgroundColor: '#EEF2FF', justifyContent: 'center', alignItems: 'center', marginRight: 12 },
+  clockInfo: { flex: 1 },
+  clockTitle: { fontSize: 15, fontWeight: '700', color: Theme.colors.text },
+  clockHint: { fontSize: 11, color: Theme.colors.textLight, marginTop: 2 },
   manageRow: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#fff', paddingHorizontal: 14, height: 60, borderRadius: Theme.borderRadius.lg },
   manageIcon: { width: 38, height: 38, borderRadius: 19, backgroundColor: '#EEF2FF', justifyContent: 'center', alignItems: 'center', marginRight: 12 },
   manageRowText: { flex: 1, fontSize: 15, fontWeight: '700', color: Theme.colors.text },

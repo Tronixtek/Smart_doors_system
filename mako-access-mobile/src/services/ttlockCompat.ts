@@ -15,6 +15,21 @@ type TTLockModuleShape = {
     fail: (code: number, desc: string) => void
   ) => void;
   getBluetoothState: (callback: (state: number) => void) => void;
+
+  // The lock keeps its own clock and validates every credential against it.
+  // If it drifts, a credential enrolled "from now" is not yet valid to the
+  // lock and gets refused, so this has to be kept in sync.
+  setLockTime: (
+    timestamp: number,
+    lockData: string,
+    success: () => void,
+    fail: (code: number, desc: string) => void
+  ) => void;
+  getLockTime: (
+    lockData: string,
+    success: (lockTimestamp: number) => void,
+    fail: (code: number, desc: string) => void
+  ) => void;
   requestBluetoothState?: () => void;
   
   // PIN / Passcode

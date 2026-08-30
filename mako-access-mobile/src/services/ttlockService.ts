@@ -108,6 +108,64 @@ export const TTLockService = {
   },
 
   /**
+   * Read the lock's internal clock (ms since epoch).
+   */
+  getLockTime: (lockData: string): Promise<number> => {
+    return new Promise((resolve, reject) => {
+      const ttlock = TTLockCompat.getModule();
+      if (!ttlock) {
+        reject(new Error(TTLOCK_ERROR_MESSAGES.unavailable));
+        return;
+      }
+
+      ttlock.getLockTime(lockData, (lockTimestamp) => {
+        resolve(lockTimestamp);
+      }, (errorCode, errorDesc) => {
+        reject(new Error(errorDesc));
+      });
+    });
+  },
+
+  /**
+   * Set the lock's clock to the phone's current time.
+   *
+   * The lock validates every passcode, card and fingerprint against its own
+   * clock. When that clock runs behind, a credential enrolled with a start
+   * time of "now" is still in the future as far as the lock is concerned, and
+   * it refuses it - the credential looks correctly registered but never works.
+   */
+  setLockTime: (lockData: string, timestamp = Date.now()): Promise<void> => {
+    return new Promise((resolve, reject) => {
+      const ttlock = TTLockCompat.getModule();
+      if (!ttlock) {
+        reject(new Error(TTLOCK_ERROR_MESSAGES.unavailable));
+        return;
+      }
+
+      ttlock.setLockTime(timestamp, lockData, () => {
+        resolve();
+      }, (errorCode, errorDesc) => {
+        reject(new Error(errorDesc));
+      });
+    });
+  },
+
+  /**
+   * Best-effort clock sync used before enrolling a credential. Never throws:
+   * a failed sync should not block enrolment, since the backdated start time
+   * still covers modest drift.
+   */
+  syncLockTimeQuietly: async (lockData: string): Promise<boolean> => {
+    try {
+      await TTLockService.setLockTime(lockData);
+      return true;
+    } catch (error) {
+      console.warn('Could not sync the lock clock', error);
+      return false;
+    }
+  },
+
+  /**
    * Add a custom passcode to the lock
    */
   addPasscode: (lockData: string, passcode: string, startDate: number, endDate: number): Promise<void> => {
