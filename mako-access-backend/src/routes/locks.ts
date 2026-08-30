@@ -122,6 +122,22 @@ const resolveLogEntry = (logData: any, credentials: Map<string, any>) => {
   };
 };
 
+/**
+ * Load a lock only if it belongs to an organization the caller can access.
+ *
+ * Every per-lock route must go through this. The system is multi-tenant and a
+ * user may belong to several organizations, so ownership is "the lock's org is
+ * one of mine" - never a bare findById, which would expose other tenants'
+ * locks to anyone who knows an id.
+ */
+const findAccessibleLock = async (user: any, lockId: string, populateAccessPoint = false) => {
+  await syncUserOrganizations(user);
+  const organizationIds = await getUserOrganizationIds(user);
+
+  const query = Lock.findOne({ _id: lockId, organizationId: { $in: organizationIds } });
+  return populateAccessPoint ? query.populate('accessPointId') : query;
+};
+
 router.post('/register', async (req: AuthRequest, res) => {
   try {
     const { accessPointId, lockMac, lockName, lockData, lockVersion } = req.body;
@@ -163,9 +179,9 @@ router.post('/:lockId/credentials', async (req: AuthRequest, res) => {
   try {
     const { lockId } = req.params;
     const { name, keyType, keyIdentifier, startDate, endDate } = req.body;
-    
-    const lock = await Lock.findById(lockId);
-    if (!lock) return res.status(404).json({ message: 'Lock not found' });
+
+    const lock = await findAccessibleLock(req.user, lockId);
+    if (!lock) return res.status(404).json({ message: 'Lock not found or unauthorized' });
 
     const key = await LockKey.create({
       organizationId: lock.organizationId,
@@ -183,6 +199,72 @@ router.post('/:lockId/credentials', async (req: AuthRequest, res) => {
   }
 });
 
+// List the credentials enrolled on a lock
+router.get('/:lockId/credentials', async (req: AuthRequest, res) => {
+  try {
+    const { lockId } = req.params;
+
+    const lock = await findAccessibleLock(req.user, lockId);
+    if (!lock) return res.status(404).json({ message: 'Lock not found or unauthorized' });
+
+    const credentials = await LockKey.find({ lockId }).sort({ createdAt: -1 });
+    res.json(credentials);
+  } catch (error: any) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+/**
+ * Remove one enrolled credential.
+ *
+ * The caller is expected to have already deleted it from the lock hardware
+ * over Bluetooth - this only drops our record of it. Scoped to the lock *and*
+ * the caller's organizations so one tenant cannot delete another's keys.
+ */
+router.delete('/:lockId/credentials/:credentialId', async (req: AuthRequest, res) => {
+  try {
+    const { lockId, credentialId } = req.params;
+
+    const lock = await findAccessibleLock(req.user, lockId);
+    if (!lock) return res.status(404).json({ message: 'Lock not found or unauthorized' });
+
+    const credential = await LockKey.findOneAndDelete({
+      _id: credentialId,
+      lockId,
+      organizationId: lock.organizationId,
+    });
+    if (!credential) return res.status(404).json({ message: 'Credential not found' });
+
+    res.json({ message: 'Credential removed', credential });
+  } catch (error: any) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+/**
+ * Drop every credential of one type for a lock, to match a hardware-level
+ * "clear all cards/fingerprints". Needed because credentials enrolled directly
+ * on the lock have no record here, so only a bulk wipe can guarantee the lock
+ * and the app agree on what exists.
+ */
+router.delete('/:lockId/credentials', async (req: AuthRequest, res) => {
+  try {
+    const { lockId } = req.params;
+    const keyType = req.query.keyType as string | undefined;
+
+    const lock = await findAccessibleLock(req.user, lockId);
+    if (!lock) return res.status(404).json({ message: 'Lock not found or unauthorized' });
+
+    const filter: any = { lockId, organizationId: lock.organizationId };
+    if (keyType) filter.keyType = keyType;
+
+    const result = await LockKey.deleteMany(filter);
+    res.json({ message: 'Credentials removed', deletedCount: result.deletedCount });
+  } catch (error: any) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
 // Sync logs from the lock
 router.post('/:lockId/logs', async (req: AuthRequest, res) => {
   try {
@@ -193,8 +275,8 @@ router.post('/:lockId/logs', async (req: AuthRequest, res) => {
       return res.status(400).json({ message: 'Invalid logs format. Expected an array.' });
     }
 
-    const lock = await Lock.findById(lockId).populate('accessPointId');
-    if (!lock) return res.status(404).json({ message: 'Lock not found' });
+    const lock = await findAccessibleLock(req.user, lockId, true);
+    if (!lock) return res.status(404).json({ message: 'Lock not found or unauthorized' });
 
     // The lock hardware stores credential numbers, not names. Resolve each
     // record against the credentials enrolled through the app for this lock.
@@ -299,6 +381,10 @@ router.post('/:lockId/unlock-events', async (req: AuthRequest, res) => {
 router.get('/:lockId/logs', async (req: AuthRequest, res) => {
   try {
     const { lockId } = req.params;
+
+    const lock = await findAccessibleLock(req.user, lockId);
+    if (!lock) return res.status(404).json({ message: 'Lock not found or unauthorized' });
+
     const logs = await AccessLog.find({ lockId }).sort({ timestamp: -1 }).limit(50);
 
     // Resolve names at read time as well as at sync time: a credential named
@@ -347,8 +433,8 @@ router.delete('/:lockId/logs', async (req: AuthRequest, res) => {
 router.put('/:id', async (req: AuthRequest, res) => {
   try {
     const { id } = req.params;
-    const { lockName, accessPointId } = req.body;
-    
+    const { lockName, accessPointId, lockData } = req.body;
+
     await syncUserOrganizations(req.user);
     const organizationIds = await getUserOrganizationIds(req.user);
 
@@ -361,8 +447,14 @@ router.put('/:id', async (req: AuthRequest, res) => {
       lock.accessPointId = accessPointId;
     }
 
+    // Resetting passcodes on the hardware issues new lockData. Without
+    // persisting it the app permanently loses the ability to reach the lock.
+    if (lockData) {
+      lock.lockData = lockData;
+    }
+
     lock.lockName = lockName || lock.lockName;
-    
+
     await lock.save();
     res.json(lock);
   } catch (error: any) {

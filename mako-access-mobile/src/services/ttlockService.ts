@@ -222,6 +222,69 @@ export const TTLockService = {
   },
 
   /**
+   * Remove every fingerprint stored on the lock.
+   *
+   * The only way to clear prints that were enrolled directly on the hardware,
+   * since those have no record in the app to delete individually.
+   */
+  clearAllFingerprints: (lockData: string): Promise<void> => {
+    return new Promise((resolve, reject) => {
+      const ttlock = TTLockCompat.getModule();
+      if (!ttlock) {
+        reject(new Error(TTLOCK_ERROR_MESSAGES.unavailable));
+        return;
+      }
+
+      ttlock.clearAllFingerprints(lockData, () => {
+        resolve();
+      }, (errorCode, errorDesc) => {
+        reject(new Error(errorDesc));
+      });
+    });
+  },
+
+  /**
+   * Remove every IC card stored on the lock.
+   */
+  clearAllCards: (lockData: string): Promise<void> => {
+    return new Promise((resolve, reject) => {
+      const ttlock = TTLockCompat.getModule();
+      if (!ttlock) {
+        reject(new Error(TTLOCK_ERROR_MESSAGES.unavailable));
+        return;
+      }
+
+      ttlock.clearAllCards(lockData, () => {
+        resolve();
+      }, (errorCode, errorDesc) => {
+        reject(new Error(errorDesc));
+      });
+    });
+  },
+
+  /**
+   * Remove every passcode from the lock.
+   *
+   * Resolves with NEW lockData - the caller must persist it, otherwise the app
+   * can no longer operate the lock.
+   */
+  resetPasscodes: (lockData: string): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const ttlock = TTLockCompat.getModule();
+      if (!ttlock) {
+        reject(new Error(TTLOCK_ERROR_MESSAGES.unavailable));
+        return;
+      }
+
+      ttlock.resetPasscode(lockData, (newLockData) => {
+        resolve(newLockData);
+      }, (errorCode, errorDesc) => {
+        reject(new Error(errorDesc));
+      });
+    });
+  },
+
+  /**
    * Get operation logs from the lock
    */
   getLogs: (lockData: string): Promise<any[]> => {

@@ -65,6 +65,27 @@ type TTLockModuleShape = {
     fail: (code: number, desc: string) => void
   ) => void;
 
+  // Bulk wipes. Needed for credentials enrolled directly on the lock, which
+  // the app has no record of and therefore cannot delete individually.
+  clearAllFingerprints: (
+    lockData: string,
+    success: () => void,
+    fail: (code: number, desc: string) => void
+  ) => void;
+  clearAllCards: (
+    lockData: string,
+    success: () => void,
+    fail: (code: number, desc: string) => void
+  ) => void;
+  // There is no clearAllPasscodes; resetPasscode wipes every passcode and
+  // hands back NEW lockData which must be persisted, or the app loses the
+  // ability to talk to the lock.
+  resetPasscode: (
+    lockData: string,
+    success: (lockData: string) => void,
+    fail: (code: number, desc: string) => void
+  ) => void;
+
   // Logs
   getLockOperationRecord: (
     type: number,

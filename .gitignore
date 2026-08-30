@@ -22,3 +22,10 @@ mako-access-mobile/ios/build/
 *.p12
 *.key
 *.mobileprovision
+
+# release signing credentials (keep these out of the repo, and back them up)
+mako-access-mobile/android/keystore.properties
+
+# react-native-ttlock build artifacts
+react-native-ttlock/android/.gradle/
+react-native-ttlock/example/android/.gradle/
