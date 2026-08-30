@@ -14,6 +14,10 @@ export interface IAccessLog extends Document {
   lockId: mongoose.Types.ObjectId;
   accessPointId: mongoose.Types.ObjectId;
   credentialName: string; // Name of the person/credential used
+  // The PIN / card number / fingerprint number the lock reported. The hardware
+  // only stores this number, never a name, so it is what we join against
+  // LockKey.keyIdentifier to work out who the person actually was.
+  credentialIdentifier?: string;
   method: AccessMethod;
   timestamp: Date;
   success: boolean;
@@ -26,6 +30,7 @@ const AccessLogSchema = new Schema<IAccessLog>(
     lockId: { type: Schema.Types.ObjectId, ref: 'Lock', required: true },
     accessPointId: { type: Schema.Types.ObjectId, ref: 'AccessPoint', required: true },
     credentialName: { type: String, required: true },
+    credentialIdentifier: { type: String },
     method: { type: String, enum: Object.values(AccessMethod), required: true },
     timestamp: { type: Date, required: true },
     success: { type: Boolean, default: true },

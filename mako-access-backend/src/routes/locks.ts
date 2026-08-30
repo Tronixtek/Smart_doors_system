@@ -9,6 +9,56 @@ import { getUserOrganizationIds, syncUserOrganizations } from '../utils/organiza
 const router = Router();
 router.use(authenticate);
 
+// TTLock records the *number* of the credential that was used, never a name.
+// Field naming varies between SDK versions, so check every plausible key.
+const CREDENTIAL_ID_FIELDS = [
+  'keyboardPwd',
+  'keyboardPassword',
+  'password',
+  'cardNum',
+  'cardNumber',
+  'fingerprintNum',
+  'fingerprintNumber',
+  'credentialNumber',
+  'keyId',
+];
+
+const extractCredentialIdentifier = (logData: any): string | undefined => {
+  for (const field of CREDENTIAL_ID_FIELDS) {
+    const value = logData?.[field];
+    if (value !== undefined && value !== null && String(value).trim() !== '') {
+      return String(value).trim();
+    }
+  }
+  return undefined;
+};
+
+/**
+ * Human-readable label for a credential we have no enrolled name for, so the
+ * history shows *which* credential opened the door rather than "Unknown User".
+ * Passcodes are masked - the raw PIN should not be readable from a log list.
+ */
+const describeCredential = (method: string, identifier?: string): string => {
+  if (!identifier) return 'Unrecognised credential';
+
+  switch (method) {
+    case 'PASSCODE':
+      return `Unassigned PIN ••${identifier.slice(-2)}`;
+    case 'CARD':
+      return `Unassigned card ${identifier}`;
+    case 'FINGERPRINT':
+      return `Unassigned fingerprint ${identifier}`;
+    default:
+      return `Unassigned credential ${identifier}`;
+  }
+};
+
+/** Maps LockKey.keyIdentifier -> enrolled person's name for one lock. */
+const buildCredentialNameMap = async (lockId: string) => {
+  const keys = await LockKey.find({ lockId }).select('keyIdentifier name');
+  return new Map(keys.map((key) => [key.keyIdentifier, key.name]));
+};
+
 router.post('/register', async (req: AuthRequest, res) => {
   try {
     const { accessPointId, lockMac, lockName, lockData, lockVersion } = req.body;
@@ -93,19 +143,31 @@ router.post('/:lockId/logs', async (req: AuthRequest, res) => {
       10: 'KEY',
     };
 
+    // The lock hardware stores credential numbers, not names. Resolve each
+    // record against the credentials enrolled through the app for this lock.
+    const credentialNames = await buildCredentialNameMap(lockId);
+
     const createdLogs = [];
     for (const logData of logs) {
       // TTLock logs usually use 'recordType' as an integer
       const method = methodMapping[logData.recordType] || 'OTHER';
-      
+      const credentialIdentifier = extractCredentialIdentifier(logData);
+
+      const credentialName =
+        (credentialIdentifier && credentialNames.get(credentialIdentifier)) ||
+        logData.username ||
+        logData.name ||
+        describeCredential(method, credentialIdentifier);
+
       createdLogs.push({
         organizationId: lock.organizationId,
         lockId,
         accessPointId: lock.accessPointId?._id || lock.accessPointId,
-        credentialName: logData.username || logData.name || 'Unknown User',
+        credentialName,
+        credentialIdentifier,
         method: method,
         timestamp: new Date(logData.serverDate || logData.timestamp || Date.now()),
-        success: true,
+        success: logData.success === undefined ? true : Boolean(logData.success),
         rawLogData: JSON.stringify(logData),
       });
     }
@@ -126,7 +188,23 @@ router.get('/:lockId/logs', async (req: AuthRequest, res) => {
   try {
     const { lockId } = req.params;
     const logs = await AccessLog.find({ lockId }).sort({ timestamp: -1 }).limit(50);
-    res.json(logs);
+
+    // Resolve names at read time as well as at sync time: a credential named
+    // after its logs were synced should still show up correctly in history.
+    const credentialNames = await buildCredentialNameMap(lockId);
+
+    const resolved = logs.map((log) => {
+      const enrolledName = log.credentialIdentifier
+        ? credentialNames.get(log.credentialIdentifier)
+        : undefined;
+
+      return {
+        ...log.toObject(),
+        credentialName: enrolledName || log.credentialName,
+      };
+    });
+
+    res.json(resolved);
   } catch (error: any) {
     res.status(500).json({ message: error.message });
   }
